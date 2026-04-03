@@ -68,4 +68,21 @@ app.post("/auth/login", (req, res) => {
   }
 });
 
+app.post("/auth/login/nutricionista", (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    const role = "nutricionista";
+    if (role === "nutricionista") {
+      conn.execute("SELECT email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
+        if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
+        const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
+        if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
+        return res.status(200).json({ sucesso: "Login realizado com sucesso" });
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ erro: error });
+  }
+});
+
 app.listen(3000, () => { console.log("server ligado") });

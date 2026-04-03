@@ -1,6 +1,7 @@
 import express from "express";
 import conn from "./config/conn.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
 
@@ -56,11 +57,16 @@ app.post("/auth/login", (req, res) => {
     const { email, senha } = req.body;
     const role = "cliente";
     if (role === "cliente") {
-      conn.execute("SELECT email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
+      conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
-        return res.status(200).json({ sucesso: "Login realizado com sucesso" });
+        const token = jwt.sign(
+          { id_cliente: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRATION }
+        );
+        return res.status(200).json({ sucesso: "Login realizado com sucesso", token });
       });
     }
   } catch (error) {
@@ -73,11 +79,16 @@ app.post("/auth/login/nutricionista", (req, res) => {
     const { email, senha } = req.body;
     const role = "nutricionista";
     if (role === "nutricionista") {
-      conn.execute("SELECT email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
+      conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
-        return res.status(200).json({ sucesso: "Login realizado com sucesso" });
+        const token = jwt.sign(
+          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRATION }
+        );
+        return res.status(200).json({ sucesso: "Login realizado com sucesso", token });
       });
     }
   } catch (error) {

@@ -4,8 +4,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
 const salt = 12;
@@ -16,7 +18,7 @@ conn.connect((error) => {
 })
 
 const verificaToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.accessToken;
   if (!token) return res.status(401).json({ erro: "token não fornecido" });
 
   try {
@@ -67,19 +69,64 @@ app.post("/cliente", async (req, res) => {
 
 app.post("/auth/login", (req, res) => {
   try {
-    const { email, senha } = req.body;
-    const role = "cliente";
+    const { role, email, senha } = req.body;
     if (role === "cliente") {
       conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
           { id_cliente: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
           process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_EXPIRATION }
         );
-        return res.status(200).json({ sucesso: "Login realizado com sucesso", token });
+        const refreshToken = jwt.sign(
+          { id_cliente: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
+        );
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
+        });
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 1000 * 60 * 5 // 5 min
+        });
+        return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
+      });
+    } else if (role === "nutri") {
+      conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
+        if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
+        const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
+        if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
+        const accessToken = jwt.sign(
+          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRATION }
+        );
+        const refreshToken = jwt.sign(
+          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
+        );
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
+        });
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 1000 * 60 * 5 // 5 min
+        });
+        return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
       });
     }
   } catch (error) {
@@ -87,23 +134,11 @@ app.post("/auth/login", (req, res) => {
   }
 });
 
-app.post("/auth/login/nutricionista", (req, res) => {
+app.post("/auth/logout", verificaToken, (req, res) => {
   try {
-    const { email, senha } = req.body;
-    const role = "nutricionista";
-    if (role === "nutricionista") {
-      conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
-        if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
-        const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
-        if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
-        const token = jwt.sign(
-          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
-          process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRATION }
-        );
-        return res.status(200).json({ sucesso: "Login realizado com sucesso", token });
-      });
-    }
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({ sucesso: "Deslogado com sucesso" });
   } catch (error) {
     res.status(500).json({ erro: error });
   }

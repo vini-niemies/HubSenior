@@ -15,6 +15,19 @@ conn.connect((error) => {
   else console.log("banco conectado");
 })
 
+const verificaToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ erro: "token não fornecido" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ erro: "token inválido ou expirado" })
+  }
+};
+
 app.post("/nutricionista", async (req, res) => {
   try {
     const { nome, crn, email, telefone } = req.body;

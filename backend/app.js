@@ -56,7 +56,6 @@ app.post("/cliente", async (req, res) => {
       if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao atribuir conta a um nutricionista" });
       const { id_nutricionista } = rows[0];
       const cliente = new Cliente(nome, email, senha, dataNasc, codigo, id_nutricionista, objetivo, endereco);
-      console.log(cliente)
       conn.execute("INSERT INTO clientes (nome, email, senha, data_nascimento, codigo_nutricionista, id_nutricionista, objetivo, endereco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", cliente.toArray(), (error, results) => {
         if (error) return res.status(500).json({ erro: error });
         res.status(201).json({ sucesso: "Cliente Criado" });

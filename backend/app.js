@@ -30,12 +30,12 @@ const verificaToken = (req, res, next) => {
 
 app.post("/nutricionista", async (req, res) => {
   try {
-    const { nome, crn, email, telefone } = req.body;
+    const { nome, crn, email, telefone, instagram, endereco } = req.body;
     const senha = await bcrypt.hash(req.body.senha, salt);
     if (!nome || !crn || !email || !telefone || !senha) return res.status(400).json({ erro: "Todos os dados devem ser preenchidos" });
     const codigo = await bcrypt.hash(nome + email, salt);
-    const nutri = new Nutricionista(nome, crn, email, senha, telefone, codigo);
-    conn.execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo) VALUES (?, ?, ? ,?, ?, ?)", nutri.toArray(), (error, results) => {
+    const nutri = new Nutricionista(nome, crn, email, senha, telefone, codigo, instagram, endereco);
+    conn.execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray(), (error, results) => {
       if (error) return res.status(500).json({ erro: error });
       res.status(201).json({ sucesso: "Usuario Criado" });
     });
@@ -47,15 +47,15 @@ app.post("/nutricionista", async (req, res) => {
 
 app.post("/cliente", async (req, res) => {
   try {
-    const { nome, email, dataNasc, objetivo, codigo } = req.body;
+    const { nome, email, dataNasc, objetivo, codigo, endereco } = req.body;
     const senha = await bcrypt.hash(req.body.senha, salt);
     conn.execute("SELECT id_nutricionista FROM nutricionistas WHERE codigo = ?", [codigo], (error, rows) => {
       if (error) return res.status(500).json({ erro: error });
       if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao atribuir conta a um nutricionista" });
       const { id_nutricionista } = rows[0];
-      const cliente = new Cliente(nome, email, senha, dataNasc, codigo, id_nutricionista, objetivo);
+      const cliente = new Cliente(nome, email, senha, dataNasc, codigo, id_nutricionista, objetivo, endereco);
       console.log(cliente)
-      conn.execute("INSERT INTO clientes (nome, email, senha, data_nascimento, codigo_nutricionista, id_nutricionista, objetivo) VALUES (?, ?, ?, ?, ?, ?, ?)", cliente.toArray(), (error, results) => {
+      conn.execute("INSERT INTO clientes (nome, email, senha, data_nascimento, codigo_nutricionista, id_nutricionista, objetivo, endereco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", cliente.toArray(), (error, results) => {
         if (error) return res.status(500).json({ erro: error });
         res.status(201).json({ sucesso: "Cliente Criado" });
       });

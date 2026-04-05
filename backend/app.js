@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
 import Dieta from "./models/Dieta.js";
+import ResultadoExames from "./models/resultado_exames.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -12,8 +13,7 @@ const app = express();
 app.use(cors({
   credentials: true,
   origin: 'http://127.0.0.1:5500'
-}
-));
+}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
@@ -76,19 +76,19 @@ app.post("/cliente", async (req, res) => {
 app.post("/auth/login", (req, res) => {
   try {
     const { role, email, senha } = req.body;
-    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações" })
+    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações" });
     if (role === "cliente") {
       conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
         const accessToken = jwt.sign(
-          { id: rows[0].id_cliente, id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "cliente" },
+          { id: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
           process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_EXPIRATION || "5m" }
         );
         const refreshToken = jwt.sign(
-          { id: rows[0].id_cliente, id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "cliente" },
+          { id: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
           process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
         );
@@ -114,7 +114,7 @@ app.post("/auth/login", (req, res) => {
         const accessToken = jwt.sign(
           { id: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
           process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRATION }
+          { expiresIn: process.env.JWT_EXPIRATION || "5m" }
         );
         const refreshToken = jwt.sign(
           { id: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
@@ -158,8 +158,7 @@ app.post("/auth/refresh", (req, res) => {
     jwt.verify(refreshToken, process.env.JWT_SECRET, (error, decoded) => {
       if (error) return res.status(403).json({ erro: "Refresh token inválido ou expirado" });
       const accessToken = jwt.sign({
-        id: decoded.id,
-        id_nutricionista: decoded.id_nutricionista,
+        id: decoded.id || decoded.id_cliente,
         email: decoded.email,
         role: decoded.role
       },
@@ -168,7 +167,7 @@ app.post("/auth/refresh", (req, res) => {
       );
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: fals,
+        secure: false,
         sameSite: 'Lax',
         maxAge: 1000 * 60 * 5
       });
@@ -181,9 +180,7 @@ app.post("/auth/refresh", (req, res) => {
 
 app.post("/dieta", verificaToken, (req, res) => {
   try {
-    const token = req.cookies.accessToken;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== "nutricionista") {
+    if (req.user.role !== "nutricionista") {
       return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar dietas" });
     }
     const {
@@ -203,7 +200,7 @@ app.post("/dieta", verificaToken, (req, res) => {
       return res.status(400).json({ erro: "id_cliente e data_inicio são obrigatórios" });
     }
 
-    const id_nutricionista = decoded.id;
+    const id_nutricionista = req.user.id || req.user.id_nutricionista;
 
     conn.execute(
       "SELECT id_cliente FROM clientes WHERE id_cliente = ? AND id_nutricionista = ?",
@@ -236,6 +233,70 @@ app.post("/dieta", verificaToken, (req, res) => {
             return res.status(201).json({
               sucesso: "Dieta cadastrada com sucesso",
               id_dieta: results.insertId
+            });
+          }
+        );
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({ erro: error });
+  }
+});
+
+app.post("/resultado-exames", verificaToken, (req, res) => {
+  try {
+    if (req.user.role !== "nutricionista") {
+      return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar resultados de exames" });
+    }
+
+    const {
+      id_cliente,
+      data_realizacao,
+      percentual_gordura,
+      massa_magra,
+      gordura_visceral,
+      taxa_metabolica_basal,
+      colesterol_total,
+      glicemia_jejum,
+      outros_marcadores
+    } = req.body;
+
+    if (!id_cliente || !data_realizacao) {
+      return res.status(400).json({ erro: "id_cliente e data_realizacao sao obrigatorios" });
+    }
+
+    const id_nutricionista = req.user.id || req.user.id_nutricionista;
+
+    conn.execute(
+      "SELECT id_cliente FROM clientes WHERE id_cliente = ? AND id_nutricionista = ?",
+      [id_cliente, id_nutricionista],
+      (error, rows) => {
+        if (error) return res.status(500).json({ erro: error });
+        if (rows.length <= 0) {
+          return res.status(404).json({ erro: "Cliente nao encontrado para este nutricionista" });
+        }
+
+        const resultadoExames = new ResultadoExames(
+          id_cliente,
+          id_nutricionista,
+          data_realizacao,
+          percentual_gordura || null,
+          massa_magra || null,
+          gordura_visceral || null,
+          taxa_metabolica_basal || null,
+          colesterol_total || null,
+          glicemia_jejum || null,
+          outros_marcadores || null
+        );
+
+        conn.execute(
+          "INSERT INTO resultados_exames (id_cliente, id_nutricionista, data_realizacao, percentual_gordura, massa_magra, gordura_visceral, taxa_metabolica_basal, colesterol_total, glicemia_jejum, outros_marcadores) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          resultadoExames.toArray(),
+          (insertError, results) => {
+            if (insertError) return res.status(500).json({ erro: insertError });
+            return res.status(201).json({
+              sucesso: "Resultado de exames cadastrado com sucesso",
+              id_exame: results.insertId
             });
           }
         );

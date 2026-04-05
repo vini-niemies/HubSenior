@@ -8,16 +8,28 @@ import Dieta from "./models/Dieta.js";
 import ResultadoExames from "./models/resultado_exames.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors({
   credentials: true,
-  origin: 'http://127.0.0.1:5500'
+  origin: ['http://localhost:3000']
 }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 const salt = 12;
+
+const cookieConfig = {
+  httpOnly: true,
+  secure: false,
+  sameSite: 'Lax',
+};
 
 conn.connect((error) => {
   if (error) console.log("erro" + error);
@@ -93,15 +105,11 @@ app.post("/auth/login", (req, res) => {
           { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
         );
         res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'Lax',
+          ...cookieConfig,
           maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
         });
         res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'Lax',
+          ...cookieConfig,
           maxAge: 1000 * 60 * 5 // 5 min
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
@@ -122,15 +130,11 @@ app.post("/auth/login", (req, res) => {
           { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
         );
         res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'Lax',
+          ...cookieConfig,
           maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
         });
         res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'Lax',
+          ...cookieConfig,
           maxAge: 1000 * 60 * 5 // 5 min
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
@@ -166,9 +170,7 @@ app.post("/auth/refresh", (req, res) => {
         { expiresIn: process.env.JWT_EXPIRATION || "5m" }
       );
       res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'Lax',
+        ...cookieConfig,
         maxAge: 1000 * 60 * 5
       });
       return res.status(200).json({ sucesso: "Token renovado", accessToken });

@@ -4,16 +4,30 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
-import Dieta from "./models/Dieta.js";
-import ResultadoExames from "./models/resultado_exames.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
 const app = express();
-app.use(cors({ 
+const envOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  ...envOrigins
+];
+
+app.use(cors({
   credentials: true,
-  origin: 'http://127.0.0.1:5500' }
-));
+  origin: (origin, callback) => {
+    const isLocalhostOrigin = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin || "");
+    if (!origin || isLocalhostOrigin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Origem nao permitida pelo CORS"));
+  }
+}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
@@ -148,136 +162,6 @@ app.post("/auth/logout", verificaToken, (req, res) => {
     res.status(200).json({ sucesso: "Deslogado com sucesso" });
   } catch (error) {
     res.status(500).json({ erro: error });
-  }
-});
-
-app.post("/dieta", verificaToken, (req, res) => {
-  try {
-    if (req.user.role !== "nutricionista") {
-      return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar dietas" });
-    }
-
-    const {
-      id_cliente,
-      data_inicio,
-      data_fim,
-      titulo_dieta,
-      refeicao1,
-      refeicao2,
-      refeicao3,
-      refeicao4,
-      detalhes_alimentos,
-      objetivos
-    } = req.body;
-
-    if (!id_cliente || !data_inicio) {
-      return res.status(400).json({ erro: "id_cliente e data_inicio são obrigatórios" });
-    }
-
-    const id_nutricionista = req.user.id_nutricionista;
-
-    conn.execute(
-      "SELECT id_cliente FROM clientes WHERE id_cliente = ? AND id_nutricionista = ?",
-      [id_cliente, id_nutricionista],
-      (error, rows) => {
-        if (error) return res.status(500).json({ erro: error });
-        if (rows.length <= 0) {
-          return res.status(404).json({ erro: "Cliente não encontrado para este nutricionista" });
-        }
-
-        const dieta = new Dieta(
-          id_cliente,
-          id_nutricionista,
-          data_inicio,
-          data_fim || null,
-          titulo_dieta || null,
-          refeicao1 || null,
-          refeicao2 || null,
-          refeicao3 || null,
-          refeicao4 || null,
-          detalhes_alimentos || null,
-          objetivos || null
-        );
-
-        conn.execute(
-          "INSERT INTO dietas (id_cliente, id_nutricionista, data_inicio, data_fim, titulo_dieta, refeicao1, refeicao2, refeicao3, refeicao4, detalhes_alimentos, objetivos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          dieta.toArray(),
-          (insertError, results) => {
-            if (insertError) return res.status(500).json({ erro: insertError });
-            return res.status(201).json({
-              sucesso: "Dieta cadastrada com sucesso",
-              id_dieta: results.insertId
-            });
-          }
-        );
-      }
-    );
-  } catch (error) {
-    return res.status(500).json({ erro: error });
-  }
-});
-
-app.post("/resultado-exames", verificaToken, (req, res) => {
-  try {
-    if (req.user.role !== "nutricionista") {
-      return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar resultados de exames" });
-    }
-
-    const {
-      id_cliente,
-      data_realizacao,
-      percentual_gordura,
-      massa_magra,
-      gordura_visceral,
-      taxa_metabolica_basal,
-      colesterol_total,
-      glicemia_jejum,
-      outros_marcadores
-    } = req.body;
-
-    if (!id_cliente || !data_realizacao) {
-      return res.status(400).json({ erro: "id_cliente e data_realizacao sao obrigatorios" });
-    }
-
-    const id_nutricionista = req.user.id_nutricionista;
-
-    conn.execute(
-      "SELECT id_cliente FROM clientes WHERE id_cliente = ? AND id_nutricionista = ?",
-      [id_cliente, id_nutricionista],
-      (error, rows) => {
-        if (error) return res.status(500).json({ erro: error });
-        if (rows.length <= 0) {
-          return res.status(404).json({ erro: "Cliente nao encontrado para este nutricionista" });
-        }
-
-        const resultadoExames = new ResultadoExames(
-          id_cliente,
-          id_nutricionista,
-          data_realizacao,
-          percentual_gordura || null,
-          massa_magra || null,
-          gordura_visceral || null,
-          taxa_metabolica_basal || null,
-          colesterol_total || null,
-          glicemia_jejum || null,
-          outros_marcadores || null
-        );
-
-        conn.execute(
-          "INSERT INTO resultados_exames (id_cliente, id_nutricionista, data_realizacao, percentual_gordura, massa_magra, gordura_visceral, taxa_metabolica_basal, colesterol_total, glicemia_jejum, outros_marcadores) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          resultadoExames.toArray(),
-          (insertError, results) => {
-            if (insertError) return res.status(500).json({ erro: insertError });
-            return res.status(201).json({
-              sucesso: "Resultado de exames cadastrado com sucesso",
-              id_exame: results.insertId
-            });
-          }
-        );
-      }
-    );
-  } catch (error) {
-    return res.status(500).json({ erro: error });
   }
 });
 

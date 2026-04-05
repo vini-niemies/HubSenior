@@ -166,7 +166,7 @@ app.post("/auth/refresh", (req, res) => {
       );
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: false,
+        secure: fals,
         sameSite: 'Lax',
         maxAge: 1000 * 60 * 5
       });

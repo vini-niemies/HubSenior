@@ -8,9 +8,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 const app = express();
-app.use(cors({ 
+app.use(cors({
   credentials: true,
-  origin: 'http://127.0.0.1:5500' }
+  origin: 'http://127.0.0.1:5500'
+}
 ));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
@@ -74,21 +75,21 @@ app.post("/cliente", async (req, res) => {
 app.post("/auth/login", (req, res) => {
   try {
     const { role, email, senha } = req.body;
-    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações"})
+    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações" })
     if (role === "cliente") {
       conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
         const accessToken = jwt.sign(
-          { id_cliente: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
+          { id: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
           process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRATION }
+          { expiresIn: process.env.JWT_EXPIRATION || "5m"}
         );
         const refreshToken = jwt.sign(
-          { id_cliente: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
+          { id: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
           process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
+          { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d"}
         );
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
@@ -110,12 +111,12 @@ app.post("/auth/login", (req, res) => {
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
         const accessToken = jwt.sign(
-          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
+          { id: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
           process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_EXPIRATION }
         );
         const refreshToken = jwt.sign(
-          { id_nutricionista: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
+          { id: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
           process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
         );
@@ -144,6 +145,33 @@ app.post("/auth/logout", verificaToken, (req, res) => {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.status(200).json({ sucesso: "Deslogado com sucesso" });
+  } catch (error) {
+    res.status(500).json({ erro: error });
+  }
+});
+
+app.post("/auth/refresh", (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) return res.status(401).json({ erro: "Refresh token não fornecido" });
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (error, decoded) => {
+      if (error) return res.status(403).json({ erro: "Refresh token inválido ou expirado" });
+      const accessToken = jwt.sign({
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role
+      },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRATION || "5m"}
+      );
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Lax',
+        maxAge: 1000 * 60 * 5
+      });
+      return res.status(200).json({ sucesso: "Token renovado", accessToken });
+    });
   } catch (error) {
     res.status(500).json({ erro: error });
   }

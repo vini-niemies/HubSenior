@@ -5,8 +5,13 @@ import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app = express();
+app.use(cors({ 
+  credentials: true,
+  origin: 'http://127.0.0.1:5500' }
+));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
@@ -69,6 +74,7 @@ app.post("/cliente", async (req, res) => {
 app.post("/auth/login", (req, res) => {
   try {
     const { role, email, senha } = req.body;
+    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações"})
     if (role === "cliente") {
       conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
@@ -87,13 +93,13 @@ app.post("/auth/login", (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          sameSite: 'none',
+          sameSite: 'Lax',
           maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
         });
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          sameSite: 'none',
+          sameSite: 'Lax',
           maxAge: 1000 * 60 * 5 // 5 min
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
@@ -116,13 +122,13 @@ app.post("/auth/login", (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          sameSite: 'none',
+          sameSite: 'Lax',
           maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
         });
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          sameSite: 'none',
+          sameSite: 'Lax',
           maxAge: 1000 * 60 * 5 // 5 min
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });

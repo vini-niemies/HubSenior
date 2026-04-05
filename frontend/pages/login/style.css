@@ -1,0 +1,188 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* Fundo */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('./img/pexels-yankrukov-6815699.jpg') no-repeat center center/cover;
+  z-index: -2;
+}
+
+.background::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(26, 43, 76, 0.7);
+}
+
+/* Container */
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD LOGIN */
+.login-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  width: 340px;
+  border-radius: 16px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  text-align: center;
+  transition: 0.3s;
+}
+
+.login-box:hover {
+  transform: translateY(-5px);
+}
+
+/* LOGO */
+.logo {
+  color: #F27121;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+
+/* SUB */
+.subtitle {
+  color: #F9F9F9;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* INPUTS */
+.input-box {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+/* INPUT NORMAL */
+.input-box input {
+  width: 100%;
+  padding: 10px 5px;
+  border: none;
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  background: transparent;
+  outline: none;
+  color: #fff;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+/* SELECT MELHORADO */
+.input-box select {
+  width: 100%;
+  padding: 10px 30px 10px 5px;
+  border: none;
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  background-color: transparent;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.select-box {
+  position: relative;
+}
+
+.select-box::after {
+  content: "▼";
+  position: absolute;
+  right: 5px;
+  top: 12px;
+  color: #F27121;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* foco p ficar bonito */
+.input-box input:focus,
+.input-box select:focus {
+  border-bottom: 2px solid #F27121;
+}
+
+.input-box label {
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  color: #ccc;
+  font-size: 14px;
+  transition: 0.3s;
+  pointer-events: none;
+}
+
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+  top: -10px;
+  font-size: 12px;
+  color: #F27121;
+}
+
+/* caso tire a foto de fundo só pra n ficar tudo branco */
+select option {
+  background: #1A2B4C;
+  color: #fff;
+}
+
+/* botão de login laranja, deixei o hover separado */
+#loginBtn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #F27121, #ff8c42);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+#loginBtn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
+}
+
+#loginBtn:active {
+  transform: scale(0.98);
+}
+
+/* olhozinho p quando for usar js  */
+.senha-box button {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ccc;
+  transition: 0.3s;
+}
+
+.senha-box button:hover {
+  color: #F27121;
+  transform: scale(1.2);
+}

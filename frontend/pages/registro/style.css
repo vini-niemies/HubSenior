@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1em;
+}
+
+
+.cliente, .nutricionista {
+  display: none;
+}
+
+#roleForm {
+  font-size: 50px;
+}

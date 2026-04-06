@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior</title>
+  <link rel="stylesheet" href="../login/style.css">
+</head>
+<body>
+
+  <div class="background"></div>
+
+  <main class="container">
+    <div class="login-box">
+
+      <h1 class="logo">HubSenior</h1>
+      <p class="subtitle">Área do Cliente</p>
+
+      <form id="formCliente">
+
+        <div class="input-box">
+          <input type="text" id="nome" required>
+          <label>Nome Completo</label>
+        </div>
+
+        <div class="input-box">
+          <input type="email" id="email" required>
+          <label>E-mail</label>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="senha" required>
+          <label>Senha</label>
+        </div>
+
+        <div class="input-box">
+          <input id="dataNascimento" required>
+          <label>Data de Nascimento</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="endereco" required>
+          <label>Endereço</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="objetivo" required>
+          <label>Objetivo</label>
+        </div>
+
+        <div class="input-box">
+          <input type="number" id="peso" required>
+          <label>Peso (kg)</label>
+        </div>
+
+        <div class="input-box">
+          <input type="number" id="altura" required>
+          <label>Altura (cm)</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="alergias">
+          <label>Alergias / Restrições</label>
+        </div>
+
+        <button id="loginBtn" type="submit">Salvar Dados</button>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="./index.js"></script>
+</body>
+</html>

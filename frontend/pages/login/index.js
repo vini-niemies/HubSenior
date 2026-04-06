@@ -3,11 +3,6 @@ const emailInput = document.getElementById("email");
 const senhaInput = document.getElementById("senha");
 const roleSelect = document.getElementById("role");
 
-const senhaToggle = document.getElementById("toggleSenha");
-senhaToggle.addEventListener("click", () => {
-  senhaInput.setAttribute("type", senhaInput.getAttribute("type") === "password" ? "text" : "password");
-})
-
 async function login(e) {
   e.preventDefault();
   const user = {

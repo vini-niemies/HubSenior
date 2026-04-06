@@ -16,7 +16,7 @@ async function criarCliente(e) {
     objetivo,
     endereco
   }
-  const response = await fetch("http://localhost:3000/cliente", {
+  const response = await fetch("http://localhost:3000/user/cliente", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -46,7 +46,7 @@ async function criarNutricionista(e) {
     instagram,
     endereco
   };
-  const response = await fetch("http://localhost:3000/nutricionista", {
+  const response = await fetch("http://localhost:3000/user/nutricionista", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {

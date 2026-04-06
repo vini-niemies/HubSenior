@@ -1,7 +1,12 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import conn from "../config/conn.js";
+import Nutricionista from "../models/Nutricionista.js";
+
 
 class NutricionistaController {
   async CriarNutricionista(req, res) {
+    const salt = 12;
     try {
       const { nome, crn, email, senha, telefone, instagram, endereco } = req.body;
       if (!nome || !crn || !email || !senha || !telefone) {

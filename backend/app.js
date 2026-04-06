@@ -36,37 +36,6 @@ conn.connect((error) => {
   else console.log("banco conectado");
 })
 
-const verificaToken = (req, res, next) => {
-  const token = req.cookies.accessToken;
-  if (!token) return res.status(401).json({ erro: "token não fornecido" });
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(403).json({ erro: "token inválido ou expirado" })
-  }
-};
-
-app.post("/nutricionista", async (req, res) => {
-  try {
-    const { nome, crn, email, senha, telefone, instagram, endereco } = req.body;
-    if (!nome || !crn || !email || !senha || !telefone) {
-      return res.status(400).json({ erro: "Campos obrigatorios faltando: nome, crn, email, senha, telefone" });
-    }
-    const senhaCriptografada = await bcrypt.hash(senha, salt);
-    const codigo = await bcrypt.hash(nome + email, salt);
-    const nutri = new Nutricionista(nome, crn, email, senhaCriptografada, telefone, codigo, instagram, endereco);
-    conn.execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray(), (error, results) => {
-      if (error) return res.status(500).json({ erro: error });
-      return res.status(201).json({ sucesso: "Usuario Criado" });
-    });
-  } catch (error) {
-    return res.status(500).json({ erro: error });
-  }
-
-});
-
 app.get("/nutri/clientes", verificaToken, async (req, res) => {
   try {
     const token = req.cookies.accessToken;
@@ -180,7 +149,7 @@ app.post("/auth/logout", (req, res) => {
     return res.status(500).json({ erro: error });
   }
 });
-
+  
 app.post("/auth/refresh", (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;

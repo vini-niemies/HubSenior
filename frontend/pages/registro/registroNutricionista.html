@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior</title>
+  <link rel="stylesheet" href="../login/style.css">
+</head>
+<body>
+
+  <div class="background"></div>
+
+  <main class="container">
+    <div class="login-box">
+
+      <h1 class="logo">HubSenior</h1>
+      <p class="subtitle">Cadastro do Nutricionista</p>
+
+      <form id="formNutri">
+
+        <div class="input-box">
+          <input type="text" id="nutriNome" required>
+          <label>Nome Completo</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="nutriCrn" required>
+          <label>CRN</label>
+        </div>
+
+        <div class="input-box">
+          <input type="email" id="nutriEmail" required>
+          <label>E-mail</label>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="nutriSenha" required>
+          <label>Senha</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="nutriTelefone" required>
+          <label>Telefone</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="nutriInstagram">
+          <label>Instagram</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="nutriEndereco">
+          <label>Endereço</label>
+        </div>
+
+        <button id="loginBtn" type="submit">Criar Conta</button>
+        <p class="signup-text">Já possui conta? <a href="../login/index.html" class="signup-link">Fazer login</a>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="./index.js"></script>
+</body>
+</html>

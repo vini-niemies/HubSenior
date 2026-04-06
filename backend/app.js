@@ -66,6 +66,18 @@ app.post("/nutricionista", async (req, res) => {
 
 });
 
+app.get("/nutri/clientes", verificaToken, async (req, res) => {
+  try {
+    conn.execute("SELECT id_cliente, nome, email FROM clientes WHERE id_nutricionista = ?", (error, results) => {
+      if (error) return res.status(500).json({ erro: error });
+      if (rows.length <= 0) return res.status(200).json({ sucesso: rows[0] });
+      
+    });
+  } catch (error) {
+    res.status(500).json({ erro: error });
+  }
+});
+
 app.post("/cliente", async (req, res) => {
   try {
     const { nome, email, dataNasc, objetivo, codigo, endereco } = req.body;

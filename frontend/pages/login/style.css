@@ -186,3 +186,24 @@ select option {
   color: #F27121;
   transform: scale(1.2);
 }
+
+/*texto do criar conta corrigido bonitão */
+.signup-text {
+  color: #F9F9F9;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+/*link criar conta e o hover dele ta ali embaixo */
+.signup-link {
+  color: #F27121;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.signup-link:hover {
+  color: #ff8c42;
+  text-decoration: underline;
+  transform: scale(1.05);
+}

@@ -33,3 +33,24 @@
   text-decoration: underline;
   font-size: 14px;
 }
+
+/* Botão "Já tenho conta" */
+.home-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: transparent;
+  color: #F27121;
+  border: 2px solid #F27121;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.home-link:hover {
+  background: #F27121;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(242, 113, 33, 0.5);
+}

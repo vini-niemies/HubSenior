@@ -50,17 +50,19 @@ const verificaToken = (req, res, next) => {
 
 app.post("/nutricionista", async (req, res) => {
   try {
-    const { nome, crn, email, telefone, instagram, endereco } = req.body;
-    const senha = await bcrypt.hash(req.body.senha, salt);
-    if (!nome || !crn || !email || !telefone || !senha) return res.status(400).json({ erro: "Todos os dados devem ser preenchidos" });
+    const { nome, crn, email, senha, telefone, instagram, endereco } = req.body;
+    if (!nome || !crn || !email || !senha || !telefone) {
+      return res.status(400).json({ erro: "Campos obrigatorios faltando: nome, crn, email, senha, telefone" });
+    }
+    const senhaCriptografada = await bcrypt.hash(senha, salt);
     const codigo = await bcrypt.hash(nome + email, salt);
-    const nutri = new Nutricionista(nome, crn, email, senha, telefone, codigo, instagram, endereco);
+    const nutri = new Nutricionista(nome, crn, email, senhaCriptografada, telefone, codigo, instagram, endereco);
     conn.execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray(), (error, results) => {
       if (error) return res.status(500).json({ erro: error });
-      res.status(201).json({ sucesso: "Usuario Criado" });
+      return res.status(201).json({ sucesso: "Usuario Criado" });
     });
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 
 });
@@ -76,35 +78,42 @@ app.get("/nutri/clientes", verificaToken, async (req, res) => {
       return res.status(200).json({ sucesso: rows });
     });
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 });
 
 app.post("/cliente", async (req, res) => {
   try {
-    const { nome, email, dataNasc, objetivo, codigo, endereco } = req.body;
-    const senha = await bcrypt.hash(req.body.senha, salt);
+    const { nome, email, senha, dataNasc, objetivo, codigo, endereco } = req.body;
+    if (!nome || !email || !senha || !dataNasc || !objetivo || !codigo || !endereco) {
+      return res.status(400).json({ erro: "Campos obrigatorios faltando: nome, email, senha, dataNasc, objetivo, codigo, endereco" });
+    }
+    const senhaCriptografada = await bcrypt.hash(senha, salt);
     conn.execute("SELECT id_nutricionista FROM nutricionistas WHERE codigo = ?", [codigo], (error, rows) => {
       if (error) return res.status(500).json({ erro: error });
       if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao atribuir conta a um nutricionista" });
       const { id_nutricionista } = rows[0];
-      const cliente = new Cliente(nome, email, senha, dataNasc, codigo, id_nutricionista, objetivo, endereco);
+      const cliente = new Cliente(nome, email, senhaCriptografada, dataNasc, codigo, id_nutricionista, objetivo, endereco);
       conn.execute("INSERT INTO clientes (nome, email, senha, data_nascimento, codigo_nutricionista, id_nutricionista, objetivo, endereco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", cliente.toArray(), (error, results) => {
         if (error) return res.status(500).json({ erro: error });
-        res.status(201).json({ sucesso: "Cliente Criado" });
+        return res.status(201).json({ sucesso: "Cliente Criado" });
       });
     });
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 });
 
 app.post("/auth/login", (req, res) => {
   try {
     const { role, email, senha } = req.body;
-    if (!role || !email || !senha) return res.status(400).json({ erro: "Erro ao fazer login, preencha todas as informações" });
+    if (!role || !email || !senha) {
+      return res.status(400).json({ erro: "Campos obrigatorios faltando: role, email, senha" });
+    }
+
     if (role === "cliente") {
       conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
+        if (error) return res.status(500).json({ erro: error });
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
@@ -130,6 +139,7 @@ app.post("/auth/login", (req, res) => {
       });
     } else if (role === "nutri") {
       conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
+        if (error) return res.status(500).json({ erro: error });
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
         if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
@@ -153,19 +163,21 @@ app.post("/auth/login", (req, res) => {
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
       });
+    } else {
+      return res.status(400).json({ erro: "Campo role invalido. Use cliente ou nutri" });
     }
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 });
 
-app.post("/auth/logout", verificaToken, (req, res) => {
+app.post("/auth/logout", (req, res) => {
   try {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    res.status(200).json({ sucesso: "Deslogado com sucesso" });
+    return res.status(200).json({ sucesso: "Deslogado com sucesso" });
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 });
 
@@ -190,7 +202,7 @@ app.post("/auth/refresh", (req, res) => {
       return res.status(200).json({ sucesso: "Token renovado", accessToken });
     });
   } catch (error) {
-    res.status(500).json({ erro: error });
+    return res.status(500).json({ erro: error });
   }
 });
 
@@ -215,7 +227,7 @@ app.post("/dieta", verificaToken, (req, res) => {
     } = req.body;
 
     if (!id_cliente || !data_inicio) {
-      return res.status(400).json({ erro: "id_cliente e data_inicio são obrigatórios" });
+      return res.status(400).json({ erro: "Campos obrigatorios faltando: id_cliente, data_inicio" });
     }
 
     const id_nutricionista = req.user.id || req.user.id_nutricionista;
@@ -282,7 +294,7 @@ app.post("/resultado-exames", verificaToken, (req, res) => {
     } = req.body;
 
     if (!id_cliente || !data_realizacao) {
-      return res.status(400).json({ erro: "id_cliente e data_realizacao sao obrigatorios" });
+      return res.status(400).json({ erro: "Campos obrigatorios faltando: id_cliente, data_realizacao" });
     }
 
     const id_nutricionista = req.user.id || req.user.id_nutricionista;

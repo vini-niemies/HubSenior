@@ -1,98 +1,31 @@
-const form = document.getElementById("loginForm");
-const messageField = document.getElementById("messageField");
-const loading = document.getElementById("loading");
+const messageField = document.querySelector(".messageField");
+const emailInput = document.getElementById("email");
+const senhaInput = document.getElementById("senha");
+const roleSelect = document.getElementById("role");
 
-function showMessage(message, isError = true) {
-  if (!messageField) return;
-  messageField.textContent = message;
-  messageField.style.color = isError ? "#b91c1c" : "#166534";
-  messageField.classList.add("show");
-}
-
-function hideMessage() {
-  if (messageField) {
-    messageField.classList.remove("show");
+async function login(e) {
+  e.preventDefault();
+  const user = {
+    role: roleSelect.value,
+    email: emailInput.value,
+    senha: senhaInput.value
   }
-}
-
-function showLoading(show = true) {
-  if (loading) {
-    loading.style.display = show ? "block" : "none";
-  }
-}
-
-function getTrimmedValue(id) {
-  const element = document.getElementById(id);
-  if (!element) return "";
-  return element.value.trim();
-}
-
-async function fazerLogin(event) {
-  event.preventDefault();
-  hideMessage();
-
-  const role = getTrimmedValue("role");
-  const email = getTrimmedValue("email");
-  const senha = getTrimmedValue("senha");
-
-  if (!role || !email || !senha) {
-    showMessage("Preencha todos os campos obrigatórios.");
-    return;
-  }
-
-  if (!email.includes("@")) {
-    showMessage("Email inválido.");
-    return;
-  }
-
-  if (senha.length < 5) {
-    showMessage("Senha deve conter pelo menos 5 caracteres.");
-    return;
-  }
-
-  showLoading(true);
-
   try {
     const req = await fetch("http://localhost:3000/auth/login", {
       method: "POST",
+      body: JSON.stringify(user),
       headers: {
-        "Content-Type": "application/json"
+        "Content-type": "application/json"
       },
-      credentials: "include",
-      body: JSON.stringify({
-        role,
-        email,
-        senha
-      })
+      credentials: "include"
     });
-
     const response = await req.json();
-
-    if (!req.ok || response.erro) {
-      showMessage(response.erro || "Erro ao fazer login. Verifique suas credenciais.");
-      showLoading(false);
-      return;
-    }
-
-    showMessage(`Login realizado com sucesso!`, false);
-    showLoading(false);
-    form.reset();
-
+    if (response.erro) return messageField.textContent = response.erro;
+    alert(response.sucesso);
   } catch (error) {
-    console.error("Erro:", error);
-    showMessage("Não foi possível conectar ao servidor. Verifique sua conexão.");
-    showLoading(false);
+    messageField.textContent = "Erro ao tentar realizar login";
   }
 }
 
-if (form) {
-  form.addEventListener("submit", fazerLogin);
-} else {
-  console.warn("Formulário de login não encontrado (id esperado: loginForm).");
-}
-
-// Clear any previous messages on page load
-document.addEventListener("DOMContentLoaded", () => {
-  hideMessage();
-  showLoading(false);
-});
+const loginBtn = document.getElementById("loginBtn");
+loginBtn.addEventListener("click", login);

@@ -34,6 +34,11 @@ async function login(e) {
     alert(response.sucesso);
     logado = true;
     deslogarBtn.style.display = logado === true ? "block" : "none";
+    if (roleSelect.value === "nutri") {
+      window.location.href = "../dashboards/dashboardnutricionista.html";
+      return;
+    }
+    window.location.href = "../dashboards/dashboardcliente.html";
   } catch (error) {
     messageField.textContent = "Erro ao tentar realizar login";
   }

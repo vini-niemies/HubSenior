@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HubSenior</title>
+  <title>HubSenior | Dietas</title>
   <link rel="stylesheet" href="../login/style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -14,52 +15,50 @@
     <div class="login-box">
 
       <h1 class="logo">HubSenior</h1>
-      <p class="subtitle">Área do Nutricionista</p>
+      <p class="subtitle">Cadastro de Dieta e Refeicoes</p>
+      <div class="messageField" id="messageNutri"></div>
 
-      <form id="formNutri">
+      <form id="formDieta">
 
         <div class="input-box">
-          <input type="text" id="nome" required>
-          <label>Nome Completo</label>
+          <input type="number" id="idCliente" required>
+          <label>ID do Cliente</label>
         </div>
 
         <div class="input-box">
-          <input type="text" id="crn" required>
-          <label>CRN</label>
+          <input type="date" id="dataInicio" required>
+          <label>Data Inicio</label>
         </div>
 
         <div class="input-box">
-          <input type="email" id="email" required>
-          <label>E-mail</label>
+          <input type="date" id="dataFim">
+          <label>Data Fim</label>
         </div>
 
         <div class="input-box">
-          <input type="password" id="senha" required>
-          <label>Senha</label>
+          <input type="text" id="tituloDieta">
+          <label>Titulo da Dieta</label>
         </div>
 
         <div class="input-box">
-          <input type="text" id="telefone">
-          <label>Telefone</label>
+          <input type="text" id="objetivos">
+          <label>Objetivos</label>
         </div>
 
         <div class="input-box">
-          <input type="text" id="instagram">
-          <label>Instagram</label>
+          <input type="text" id="observacoesGerais">
+          <label>Observacoes Gerais</label>
         </div>
 
-        <div class="input-box">
-          <input type="text" id="endereco">
-          <label>Endereço</label>
-        </div>
+        <h3 class="section-title">Refeicoes</h3>
+        <div id="listaRefeicoes"></div>
+        <button class="secondary-btn" id="adicionarRefeicao" type="button">Adicionar Refeicao</button>
 
-        <div class="input-box">
-          <input type="text" id="codigo" required>
-          <label>Código Único</label>
-        </div>
-
-        <button id="loginBtn" type="submit">Salvar Dados</button>
+        <button id="loginBtn" type="submit">Salvar Dieta</button>
+        <button class="secondary-btn" id="carregarDietasNutri" type="button">Carregar Dietas do Cliente</button>
       </form>
+
+      <div id="listaDietasNutri" class="lista-dietas"></div>
 
     </div>
   </main>

@@ -1,0 +1,64 @@
+.messageField {
+  min-height: 20px;
+  color: #f9f9f9;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  color: #f9f9f9;
+  text-align: left;
+  font-size: 16px;
+  margin: 6px 0 10px;
+}
+
+.rede-item {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #f9f9f9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.secondary-btn:hover {
+  border-color: #f27121;
+  color: #f27121;
+}
+
+.lista-dietas {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-dieta {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+  color: #f9f9f9;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.card-dieta h4 {
+  margin-bottom: 8px;
+  color: #f27121;
+}
+
+.card-dieta ul {
+  margin-top: 6px;
+  padding-left: 16px;
+}

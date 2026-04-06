@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import nutriRotas from "./routes/NutricionistaRoutes.js";
 import clienteRotas from "./routes/ClienteRoutes.js";
 import authRotas from "./routes/AuthRoutes.js";
+import dietaRotas from "./routes/DietaRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(nutriRotas);
 app.use(clienteRotas);
 app.use(authRotas)
+app.use(dietaRotas);
 
 
 

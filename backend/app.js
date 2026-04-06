@@ -39,7 +39,6 @@ conn.connect((error) => {
 const verificaToken = (req, res, next) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json({ erro: "token não fornecido" });
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
@@ -68,10 +67,13 @@ app.post("/nutricionista", async (req, res) => {
 
 app.get("/nutri/clientes", verificaToken, async (req, res) => {
   try {
-    conn.execute("SELECT id_cliente, nome, email FROM clientes WHERE id_nutricionista = ?", (error, results) => {
+    const token = req.cookies.accessToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const id = decoded.id;
+    conn.execute("SELECT id_cliente, nome, email FROM clientes WHERE id_nutricionista = ?", [id], (error, rows) => {
       if (error) return res.status(500).json({ erro: error });
-      if (rows.length <= 0) return res.status(200).json({ sucesso: rows[0] });
-      
+      if (rows.length <= 0) return res.status(200).json({ sucesso: rows });
+      return res.status(200).json({ sucesso: rows });
     });
   } catch (error) {
     res.status(500).json({ erro: error });
@@ -194,7 +196,9 @@ app.post("/auth/refresh", (req, res) => {
 
 app.post("/dieta", verificaToken, (req, res) => {
   try {
-    if (req.user.role !== "nutricionista") {
+    const token = req.cookies.accessToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "nutricionista") {
       return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar dietas" });
     }
     const {
@@ -259,7 +263,9 @@ app.post("/dieta", verificaToken, (req, res) => {
 
 app.post("/resultado-exames", verificaToken, (req, res) => {
   try {
-    if (req.user.role !== "nutricionista") {
+    const token = req.cookies.accessToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "nutricionista") {
       return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar resultados de exames" });
     }
 

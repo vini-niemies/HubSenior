@@ -75,6 +75,16 @@ class AuthController {
       return res.status(500).json({ erro: error });
     }
   }
+
+  Logout(req, res) {
+    try {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.status(200).json({ sucesso: "Deslogado com sucesso" });
+    } catch (error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
 }
 
 export default new AuthController;

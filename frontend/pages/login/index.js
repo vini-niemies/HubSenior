@@ -2,7 +2,16 @@ const messageField = document.querySelector(".messageField");
 const emailInput = document.getElementById("email");
 const senhaInput = document.getElementById("senha");
 const roleSelect = document.getElementById("role");
-const togglePasswordBtn = document.querySelector(".toggle-password");
+
+let logado = false;
+
+const senhaToggle = document.getElementById("toggleSenha");
+senhaToggle.addEventListener("click", () => {
+  senhaInput.setAttribute("type", senhaInput.getAttribute("type") === "password" ? "text" : "password");
+});
+
+const deslogarBtn = document.getElementById("deslogarBtn");
+deslogarBtn.style.display = logado === true ? "block" : "none";
 
 async function login(e) {
   e.preventDefault();
@@ -23,17 +32,34 @@ async function login(e) {
     const response = await req.json();
     if (response.erro) return messageField.textContent = response.erro;
     alert(response.sucesso);
+    logado = true;
+    deslogarBtn.style.display = logado === true ? "block" : "none";
   } catch (error) {
     messageField.textContent = "Erro ao tentar realizar login";
   }
 }
 
-function togglePassword() {
-  const type = senhaInput.getAttribute("type") === "password" ? "text" : "password";
-  senhaInput.setAttribute("type", type);
-  togglePasswordBtn.textContent = type === "password" ? "Ver" : "Ocultar";
+async function deslogar(e) {
+  e.preventDefault();
+  try {
+    const response = await fetch("http://localhost:3000/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    const data = await response.json();
+    if (data.erro) return messageField.textContent = response.erro;
+    if (data.sucesso) {
+      logado = false;
+      window.location.href = "..//home/index.html";
+    }
+  } catch (error) {
+    messageField.textContent = "Erro ao tentar realizar login";
+  }
 }
 
 const loginBtn = document.getElementById("loginBtn");
 loginBtn.addEventListener("click", login);
-togglePasswordBtn.addEventListener("click", togglePassword);
+
+deslogarBtn.addEventListener("click", deslogar);

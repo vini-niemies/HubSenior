@@ -7,6 +7,7 @@ async function criarCliente(e) {
   const dataNasc = document.getElementById("clienteDataNascimento").value;
   const objetivo = document.getElementById("clienteObjetivo").value;
   const endereco = document.getElementById("clienteEndereco").value;
+
   const user = {
     codigo,
     nome,

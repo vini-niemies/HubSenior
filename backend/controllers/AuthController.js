@@ -45,7 +45,6 @@ class AuthController {
       } else if (role === "nutri") {
         conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
           if (error) return res.status(500).json({ erro: error });
-          console.log(rows, email);
           if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
           const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
           if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });

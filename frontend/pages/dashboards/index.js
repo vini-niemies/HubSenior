@@ -1,162 +1,49 @@
-function renderDietas(container, dietas) {
-  if (!container) return;
+const clientesCardsDiv = document.querySelector(".clientes-card-container");
+const nutriCodigo = document.querySelector(".codigo");
+const copiarCodigoBtn = document.getElementById("copiarbtn");
+const olaNutri = document.querySelector(".title-nutri");
 
-  if (!dietas || dietas.length <= 0) {
-    container.innerHTML = "<p class='subtitle'>Nenhuma dieta encontrada.</p>";
-    return;
-  }
+document.addEventListener("DOMContentLoaded", async () => {
 
-  container.innerHTML = dietas.map((dieta) => {
-    const refeicoesHtml = (dieta.refeicoes || []).map((refeicao) => (
-      `<li><strong>${refeicao.nome_refeicao}</strong> ${refeicao.horario ? `(${refeicao.horario})` : ""} - ${refeicao.detalhes_alimentos || "Sem detalhes"}</li>`
-    )).join("");
-
-    return `
-      <article class="card-dieta">
-        <h4>${dieta.titulo_dieta || "Dieta sem titulo"}</h4>
-        <p><strong>Inicio:</strong> ${String(dieta.data_inicio).slice(0, 10)}</p>
-        <p><strong>Fim:</strong> ${dieta.data_fim ? String(dieta.data_fim).slice(0, 10) : "-"}</p>
-        <p><strong>Objetivos:</strong> ${dieta.objetivos || "-"}</p>
-        <p><strong>Observacoes:</strong> ${dieta.observacoes_gerais || "-"}</p>
-        <ul>${refeicoesHtml}</ul>
-      </article>
-    `;
-  }).join("");
-}
-
-function criarBlocoRefeicao(indice) {
-  return `
-    <div class="rede-item refeicao-item">
-      <div class="input-box">
-        <input type="text" class="nome-refeicao" required>
-        <label>Nome da Refeicao ${indice}</label>
-      </div>
-      <div class="input-box">
-        <input type="time" class="horario-refeicao">
-        <label>Horario</label>
-      </div>
-      <div class="input-box">
-        <input type="text" class="detalhes-refeicao">
-        <label>Detalhes dos Alimentos</label>
-      </div>
-    </div>
-  `;
-}
-
-const formDieta = document.getElementById("formDieta");
-const listaRefeicoes = document.getElementById("listaRefeicoes");
-const btnAdicionarRefeicao = document.getElementById("adicionarRefeicao");
-const messageNutri = document.getElementById("messageNutri");
-const listaDietasNutri = document.getElementById("listaDietasNutri");
-const btnCarregarDietasNutri = document.getElementById("carregarDietasNutri");
-
-if (formDieta && listaRefeicoes && btnAdicionarRefeicao) {
-  let totalRefeicoes = 0;
-
-  const adicionarRefeicao = () => {
-    totalRefeicoes += 1;
-    listaRefeicoes.insertAdjacentHTML("beforeend", criarBlocoRefeicao(totalRefeicoes));
-  };
-
-  adicionarRefeicao();
-
-  btnAdicionarRefeicao.addEventListener("click", adicionarRefeicao);
-
-  formDieta.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const refeicoes = Array.from(document.querySelectorAll(".refeicao-item")).map((item) => ({
-      nome_refeicao: item.querySelector(".nome-refeicao")?.value?.trim(),
-      horario: item.querySelector(".horario-refeicao")?.value || null,
-      detalhes_alimentos: item.querySelector(".detalhes-refeicao")?.value?.trim() || null
-    })).filter((item) => item.nome_refeicao);
-
-    const payload = {
-      id_cliente: Number(document.getElementById("idCliente").value),
-      data_inicio: document.getElementById("dataInicio").value,
-      data_fim: document.getElementById("dataFim").value || null,
-      titulo_dieta: document.getElementById("tituloDieta").value.trim() || null,
-      objetivos: document.getElementById("objetivos").value.trim() || null,
-      observacoes_gerais: document.getElementById("observacoesGerais").value.trim() || null,
-      refeicoes
-    };
-
-    try {
-      const req = await fetch("http://localhost:3000/dieta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload)
-      });
-
-      const response = await req.json();
-
-      if (response.erro) {
-        messageNutri.textContent = response.erro;
-        return;
-      }
-
-      messageNutri.textContent = response.sucesso;
-      formDieta.reset();
-      listaRefeicoes.innerHTML = "";
-      totalRefeicoes = 0;
-      adicionarRefeicao();
-    } catch (error) {
-      messageNutri.textContent = "Erro ao cadastrar dieta";
-    }
-  });
-
-  if (btnCarregarDietasNutri) {
-    btnCarregarDietasNutri.addEventListener("click", async () => {
-      try {
-        const idCliente = document.getElementById("idCliente").value;
-        if (!idCliente) {
-          messageNutri.textContent = "Informe o ID do cliente para carregar dietas";
-          return;
-        }
-
-        const req = await fetch(`http://localhost:3000/dietas?id_cliente=${idCliente}`, {
-          method: "GET",
-          credentials: "include"
-        });
-
-        const response = await req.json();
-
-        if (response.erro) {
-          messageNutri.textContent = response.erro;
-          return;
-        }
-
-        renderDietas(listaDietasNutri, response.sucesso);
-      } catch (error) {
-        messageNutri.textContent = "Erro ao carregar dietas";
-      }
+  const responseNutri = await fetch("http://localhost:3000/user/nutricionista");
+  const dataNutri = await responseNutri.json();
+  if (dataNutri.erro) clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus dados</p>`;
+  olaNutri.textContent = `Olá ${dataNutri.sucesso.nome}.`;
+  if (copiarCodigoBtn) {
+    copiarCodigoBtn.addEventListener("click", async () => {
+      await copiar(dataNutri.sucesso.codigo);
     });
   }
-}
 
-const btnCarregarMinhasDietas = document.getElementById("loginBtn");
-const listaDietasCliente = document.getElementById("listaDietasCliente");
-const messageCliente = document.getElementById("messageCliente");
+  const responseClientes = await fetch("http://localhost:3000/user/nutricionista/clientes");
+  const dataClientes = await responseClientes.json();
+  if (dataClientes.erro) clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus clientes</p>`;
+  const clientes = dataClientes.sucesso;
+  if (clientes.length <= 0) {
+    clientesCardsDiv.innerHTML = `<p class="cards-div-message">Clientes não encontrados, convide seus clientes</p>`;
+  } else {
+    clientesCardsDiv.innerHTML = "";
+    clientesCardsDiv.innerHTML += clientes.map(c => `
+  <div class="card-cliente">
+    <div class="card-content">
+      <div class="card-texto">Nome: ${c.nome}</div>
+      <div class="card-texto">Email: ${c.nome}</div>
+      <div class="card-botoes-container">
+        <div class="card-botoes">Ver Dieta</div>
+        <div>Ver Dados</div>
+      </div>
+    </div>
+  </div>
+`);
+  }
 
-if (btnCarregarMinhasDietas && listaDietasCliente) {
-  btnCarregarMinhasDietas.addEventListener("click", async () => {
-    try {
-      const req = await fetch("http://localhost:3000/dietas", {
-        method: "GET",
-        credentials: "include"
-      });
+});
+async function copiar(texto) {
+  if (!texto) return;
 
-      const response = await req.json();
-
-      if (response.erro) {
-        if (messageCliente) messageCliente.textContent = response.erro;
-        return;
-      }
-
-      renderDietas(listaDietasCliente, response.sucesso);
-    } catch (error) {
-      if (messageCliente) messageCliente.textContent = "Erro ao carregar dietas";
-    }
-  });
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch (error) {
+    console.log("Erro ao copiar codigo:", error);
+  }
 }

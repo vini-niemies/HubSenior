@@ -1,104 +1,147 @@
 import conn from "../config/conn.js";
 import Dieta from "../models/Dieta.js";
-import Refeicao from "../models/Refeicao.js";
 
 class DietaController {
-  VerDietas(req, res) {
-    try {
-      if (req.user.role !== "nutricionista") return res.status(403).json({ erro: "Acesso negado" });
-      const { id } = req.body;
-      conn.execute("SELECT * FROM dietas WHERE id_cliente = ? AND id_nutricionista = ?", [id, req.user.id], (error, rows) => {
-        if (error) return res.status(500).json({ erro: "Falha ao encontrar dietas de cliente" });
-        
-        if (rows.length <= 0) {
-          return res.status(200).json({ sucesso: [] });
-        }
-
-        const dietasComRefeicoes = [];
-        let dietasProcessadas = 0;
-
-        rows.forEach((d, index) => {
-          conn.execute("SELECT * FROM refeicoes WHERE id_dieta = ?", [d.id_dieta], (error, results) => {
-            if (error) return res.status(500).json({ erro: "Falha ao encontrar refeições de dietas" });
-            
-            dietasComRefeicoes[index] = { ...d, refeicoes: results };
-            dietasProcessadas++;
-            
-            if (dietasProcessadas === rows.length) {
-              return res.status(200).json({ sucesso: dietasComRefeicoes });
-            }
-          });
-        });
-      });
-    } catch(error) {
-      return res.status(500).json({ erro: error });
-    }
-  }
   CriarDieta(req, res) {
     try {
       if (req.user.role !== "nutricionista") {
         return res.status(403).json({ erro: "Apenas nutricionistas podem cadastrar dietas" });
       }
-      const { idCliente, dataInicio, dataFim, tituloDieta, refeicao1, refeicao2, refeicao3, refeicao4, objetivos } = req.body;
 
-      if (!idCliente || !dataInicio || !dataFim || !tituloDieta || !refeicao1 || !refeicao2 || !refeicao3 || !refeicao4 || !objetivos) {
-        return res.status(400).json({ erro: "Todos os campos devem ser preenchidos" });
+      const {
+        id_cliente,
+        data_inicio,
+        data_fim,
+        titulo_dieta,
+        objetivos,
+        observacoes_gerais,
+        refeicoes
+      } = req.body;
+
+      if (!id_cliente || !data_inicio || !titulo_dieta || refeicoes.length < 1) {
+        return res.status(400).json({ erro: "Campos obrigatorios faltando" });
       }
+
+      for (const refeicao of refeicoes) {
+        if (!refeicao.nome_refeicao) {
+          return res.status(400).json({ erro: "Cada refeicao deve ser nomeada" });
+        }
+      }
+
+      const id_nutricionista = req.user.id;
+
       conn.execute(
         "SELECT id_cliente FROM clientes WHERE id_cliente = ? AND id_nutricionista = ?",
-        [idCliente, req.user.id],
+        [id_cliente, id_nutricionista],
         (clienteError, clienteRows) => {
           if (clienteError) return res.status(500).json({ erro: clienteError });
+
           if (clienteRows.length <= 0) {
             return res.status(404).json({ erro: "Cliente não encontrado para este nutricionista" });
           }
 
-          const dieta = new Dieta(idCliente, req.user.id, dataInicio, dataFim, tituloDieta, objetivos);
+          const dieta = new Dieta(
+            id_cliente,
+            id_nutricionista,
+            data_inicio,
+            data_fim || null,
+            titulo_dieta,
+            objetivos || null,
+            observacoes_gerais || null
+          );
 
-          conn.execute(
-            "INSERT INTO dietas (id_cliente, id_nutricionista, data_inicio, data_fim, titulo_dieta, objetivos) VALUES (?, ?, ?, ?, ?, ?)",
-            dieta.toArray(),
-            (error, results) => {
-              if (error) return res.status(500).json({ erro: "Erro ao criar dieta" });
+          conn.beginTransaction((transactionError) => {
+            if (transactionError) return res.status(500).json({ erro: transactionError });
 
-              const refeicoes = [
-                { prato: refeicao1, horario: "06:00:00" },
-                { prato: refeicao2, horario: "12:00:00" },
-                { prato: refeicao3, horario: "16:00:00" },
-                { prato: refeicao4, horario: "20:00:00" }
-              ];
+            conn.execute(
+              "INSERT INTO dietas (id_cliente, id_nutricionista, data_inicio, data_fim, titulo_dieta, objetivos, observacoes_gerais) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              dieta.toArray(),
+              (dietaError, dietaResult) => {
+                if (dietaError) {
+                  return conn.rollback(() => res.status(500).json({ erro: dietaError }));
+                }
 
-              let refeicoesInseridas = 0;
-              let erroOcorreu = false;
-              const idDieta = results.insertId;
+                const refeicoesValues = refeicoes.map((refeicao) => [
+                  dietaResult.insertId,
+                  refeicao.nome_refeicao,
+                  refeicao.horario || null,
+                  refeicao.detalhes_alimentos || null
+                ]);
 
-              refeicoes.forEach(r => {
-                const refeicao = new Refeicao(idDieta, r.prato, r.horario);
-                conn.execute("INSERT INTO refeicoes (id_dieta, nome_refeicao, horario) VALUES (?, ?, ?)", refeicao.toArray(),
-                  (error) => {
-                    if (error && !erroOcorreu) {
-                      erroOcorreu = true;
-                      return res.status(500).json({ erro: error.message || "Erro ao inserir refeição" });
+                conn.query(
+                  "INSERT INTO refeicoes (id_dieta, nome_refeicao, horario, detalhes_alimentos) VALUES ?",
+                  [refeicoesValues],
+                  (refeicoesError) => {
+                    if (refeicoesError) {
+                      return conn.rollback(() => res.status(500).json({ erro: refeicoesError }));
                     }
-                    
-                    if (!erroOcorreu) {
-                      refeicoesInseridas++;
-                      if (refeicoesInseridas === refeicoes.length) {
-                        return res.status(201).json({ sucesso: "Dieta cadastrada com sucesso" });
+
+                    conn.commit((commitError) => {
+                      if (commitError) {
+                        return conn.rollback(() => res.status(500).json({ erro: commitError }));
                       }
-                    }
+
+                      return res.status(201).json({
+                        sucesso: "Dieta cadastrada com sucesso",
+                        id_dieta: dietaResult.insertId
+                      });
+                    });
                   }
                 );
-              });
-            }
-          );
+              }
+            );
+          });
         }
       );
     } catch (error) {
       return res.status(500).json({ erro: error });
     }
   }
-  
+
+  ListarDietas(req, res) {
+    try {
+      const role = req.user.role;
+      const { id } = req.body;
+      const query = role === "nutri" ? "SELECT * FROM dietas WHERE id_cliente = ? AND id_nutricionista = ?" :
+      "SELECT * FROM dietas WHERE id_cliente = ?";
+      const params = role === "nutri" ? [req.user.id, id] : [id];
+      conn.execute(query, [params], (error, dietasRows) => {
+        if (error) return res.status(500).json({ erro: error });
+        if (dietasRows.length <= 0) {
+          return res.status(200).json({ sucesso: [] });
+        }
+
+        const idsDietas = dietasRows.map((dieta) => dieta.id_dieta);
+        const placeholders = idsDietas.map(() => "?").join(",");
+
+        conn.execute(
+          `SELECT * FROM refeicoes WHERE id_dieta IN (${placeholders}) ORDER BY horario ASC`,
+          idsDietas,
+          (refeicoesError, refeicoesRows) => {
+            if (refeicoesError) return res.status(500).json({ erro: refeicoesError });
+
+            const refeicoesPorDieta = {};
+
+            for (const refeicao of refeicoesRows) {
+              if (!refeicoesPorDieta[refeicao.id_dieta]) {
+                refeicoesPorDieta[refeicao.id_dieta] = [];
+              }
+              refeicoesPorDieta[refeicao.id_dieta].push(refeicao);
+            }
+
+            const dietasComRefeicoes = dietasRows.map((dieta) => ({
+              ...dieta,
+              refeicoes: refeicoesPorDieta[dieta.id_dieta] || []
+            }));
+
+            return res.status(200).json({ sucesso: dietasComRefeicoes });
+          }
+        );
+      });
+    } catch (error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
 }
 
 export default new DietaController();

@@ -14,51 +14,16 @@
   <main class="container">
     <div class="login-box">
 
-      <h1 class="logo">HubSenior</h1>
-      <p class="subtitle">Cadastro de Dieta e Refeicoes</p>
-      <div class="messageField" id="messageNutri"></div>
-
-      <form id="formDieta">
-
-        <div class="input-box">
-          <input type="number" id="idCliente" required>
-          <label>ID do Cliente</label>
+      <h1 class="logo title-top">HubSenior <button>Logout</button></h1>
+      <hr class="title-line">
+      <div>
+        <div class="title-nutri">Olá</div>
+        <div class="title-top-hud">
+          <div class="title-clientes">Clientes</div>
+          <button class="copiar-codigo" id="copiarbtn">Copiar código de nutricionista</button>
         </div>
-
-        <div class="input-box">
-          <input type="date" id="dataInicio" required>
-          <label>Data Inicio</label>
-        </div>
-
-        <div class="input-box">
-          <input type="date" id="dataFim">
-          <label>Data Fim</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="tituloDieta">
-          <label>Titulo da Dieta</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="objetivos">
-          <label>Objetivos</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="observacoesGerais">
-          <label>Observacoes Gerais</label>
-        </div>
-
-        <h3 class="section-title">Refeicoes</h3>
-        <div id="listaRefeicoes"></div>
-        <button class="secondary-btn" id="adicionarRefeicao" type="button">Adicionar Refeicao</button>
-
-        <button id="loginBtn" type="submit">Salvar Dieta</button>
-        <button class="secondary-btn" id="carregarDietasNutri" type="button">Carregar Dietas do Cliente</button>
-      </form>
-
-      <div id="listaDietasNutri" class="lista-dietas"></div>
+        <div class="clientes-card-container"></div>
+      </div>
 
     </div>
   </main>

@@ -21,8 +21,11 @@ async function login(e) {
       credentials: "include"
     });
     const response = await req.json();
+    console.log(response);
     if (response.erro) return messageField.textContent = response.erro;
-    alert(response.sucesso);
+    if (response.sucesso) {
+      window.location.href = user.role === "nutri" ? "../dashboards/dashboardnutricionista.html" : ""; 
+    }
   } catch (error) {
     messageField.textContent = "Erro ao tentar realizar login";
   }
@@ -31,7 +34,7 @@ async function login(e) {
 function togglePassword() {
   const type = senhaInput.getAttribute("type") === "password" ? "text" : "password";
   senhaInput.setAttribute("type", type);
-  togglePasswordBtn.textContent = type === "password" ? "Ver" : "Ocultar";
+  togglePasswordBtn.textContent = type === "password" ? "👁️" : "Ocultar";
 }
 
 const loginBtn = document.getElementById("loginBtn");

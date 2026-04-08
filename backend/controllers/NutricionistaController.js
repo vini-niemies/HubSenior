@@ -1,8 +1,21 @@
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import conn from "../config/conn.js";
 import Nutricionista from "../models/Nutricionista.js";
 
+
 class NutricionistaController {
+  async VerClientes(req, res) {
+    try {
+      const id = req.user.id;
+      conn.execute("SELECT * FROM clientes WHERE id_nutricionista = ?", [id], (error, results) => {
+        if (error) return res.status(500).json({ erro: error });
+        return res.status(200).json({ sucesso: results });
+      });
+    } catch(error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
   async CriarNutricionista(req, res) {
     const salt = 12;
     try {
@@ -24,17 +37,20 @@ class NutricionistaController {
   async VerDadosNutricionista(req, res) {
     try {
       const id = req.user.id;
-      conn.execute("SELECT * FROM nutricionistas WHERE id = ?", [id], (error, rows) => {
+      conn.execute("SELECT * FROM nutricionistas WHERE id_nutricionista = ?", [id], (error, rows) => {
         if (error) return res.status(500).json({ erro: error });
         return res.status(200).json({ sucesso: rows[0] });
       });
     } catch (error) {
-      return res.status(500).json({ erro: error });8
+      
+      return res.status(500).json({ erro: error });
     }
   }
   async DeletarNutricionista(req, res) {
     try {
-      const id = req.user.id;
+      const token = req.cookies.accessToken;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const id = decoded.id;
       conn.execute("DELETE FROM nutricionistas WHERE id = ?", [id], (error, results) => {
         if (error) return res.status(500).json({ erro: error });
         return res.status.json({ sucesso: "Usuário excluído com sucesso" });

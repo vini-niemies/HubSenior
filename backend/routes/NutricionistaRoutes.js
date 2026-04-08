@@ -4,6 +4,7 @@ import Functions from "../Functions/Functions.js";
 
 const router = express.Router();
 
+router.get("/user/nutricionista/clientes", Functions.verificaToken, (req, res) => NutricionistaController.VerClientes(req, res));
 router.get("/user/nutricionista", Functions.verificaToken, (req, res) => NutricionistaController.VerDadosNutricionista(req, res));
 router.post("/user/nutricionista", (req, res) => NutricionistaController.CriarNutricionista(req, res));
 router.delete("/user/nutricionista", Functions.verificaToken, (req, res) => NutricionistaController.DeletarNutricionista(req, res));

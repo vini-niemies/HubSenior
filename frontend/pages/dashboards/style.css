@@ -1,64 +1,238 @@
-.messageField {
-  min-height: 20px;
-  color: #f9f9f9;
-  font-size: 13px;
-  margin-bottom: 12px;
+.login-box {
+  width: 90%;
+  height: 90%;
 }
 
-.section-title {
-  color: #f9f9f9;
+.login-box:hover {
+  transform: translateY(0);
+}
+
+.title-nutri {
   text-align: left;
-  font-size: 16px;
-  margin: 6px 0 10px;
+  padding: 1em 0;
+  margin: 0 16px;
+  color: white;
+  font-size: 24px;
 }
 
-.rede-item {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 10px;
+.title-top {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  max-width: 90%;
+  flex-wrap: wrap;
 }
 
-.secondary-btn {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: #f9f9f9;
-  border-radius: 10px;
+.title-top button {
+  width: fit-content;
+  padding: 0.75rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s;
 }
 
-.secondary-btn:hover {
-  border-color: #f27121;
-  color: #f27121;
+.title-top button:hover {
+  background: #e55a00;
 }
 
-.lista-dietas {
-  margin-top: 14px;
+.title-clientes {
+  font-size: 24px;
+  color: white;
+}
+
+.title-line {
+  width: 100%;
+  margin: 10px 0;
+}
+
+
+.cards-div-message {
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 1em;
+}
+
+.title-top-hud {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1em;
+  align-items: center;
+}
+
+.title-codigo {
+  font-size: 24px;
+  color: white;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.copiar-codigo {
+  color: white;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  transition: 0.25s ease-out;
+}
+
+.copiar-codigo:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.card-cliente {
+  width: min(100%, 340px);
+  background: linear-gradient(145deg, rgba(255, 102, 0, 0.18), rgba(0, 0, 0, 0.35));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(3px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-cliente:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.35);
+}
+
+.card-content {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.75rem;
 }
 
-.card-dieta {
-  border: 1px solid rgba(255, 255, 255, 0.25);
+.card-texto {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.card-texto:first-child {
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-botoes-container {
+  margin-top: 0.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-botoes-container > div {
+  text-align: center;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+.card-botoes,
+.card-botoes-container > div:hover {
+  background: #ff6600;
+  border-color: #ff6600;
+}
+
+.card-botoes-container > div:hover {
+  cursor: pointer;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .card-cliente {
+    width: 100%;
+  }
+
+  .card-botoes-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.clientes-card-container {
+  margin: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.card-cliente {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  padding: 12px;
-  color: #f9f9f9;
-  text-align: left;
-  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
 }
 
-.card-dieta h4 {
-  margin-bottom: 8px;
-  color: #f27121;
+.card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 
-.card-dieta ul {
-  margin-top: 6px;
-  padding-left: 16px;
+.card-texto {
+  color: #f5f5f5;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  word-break: break-word;
 }
+
+.card-botoes-container {
+  margin-top: 0.35rem;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.card-botoes-container > div {
+  min-width: 110px;
+  text-align: center;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.card-botoes-container > div:first-child,
+.card-botoes {
+  background-color: #ff6600;
+  color: #fff;
+}
+
+.card-botoes-container > div:last-child {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-botoes-container > div:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+@media (max-width: 640px) {
+  .card-botoes-container > div {
+    flex: 1 1 100%;
+  }
+}
+

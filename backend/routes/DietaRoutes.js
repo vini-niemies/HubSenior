@@ -5,6 +5,5 @@ import Functions from "../Functions/Functions.js";
 const router = express.Router();
 
 router.post("/dieta", Functions.verificaToken, (req, res) => DietaController.CriarDieta(req, res));
-router.get("/dietas", Functions.verificaToken, (req, res) => DietaController.ListarDietas(req, res));
 
 export default router;

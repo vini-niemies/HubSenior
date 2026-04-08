@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 class Functions {
   verificaToken = (req, res, next) => {
     const token = req.cookies.accessToken;

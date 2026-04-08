@@ -45,6 +45,7 @@ class AuthController {
       } else if (role === "nutri") {
         conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
           if (error) return res.status(500).json({ erro: error });
+          console.log(rows, email);
           if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
           const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
           if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
@@ -71,6 +72,48 @@ class AuthController {
       } else {
         return res.status(400).json({ erro: "Campo role invalido. Use cliente ou nutri" });
       }
+    } catch (error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
+
+  async Logout(req, res) {
+    try {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.status(200).json({ sucesso: "Deslogado com sucesso" });
+    } catch (error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
+
+  async Refresh(req, res) {
+
+    const cookieConfig = {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Lax',
+    };
+    
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) return res.status(401).json({ erro: "Refresh token não fornecido" });
+      jwt.verify(refreshToken, process.env.JWT_SECRET, (error, decoded) => {
+        if (error) return res.status(403).json({ erro: "Refresh token inválido ou expirado" });
+        const accessToken = jwt.sign({
+          id: decoded.id || decoded.id_cliente,
+          email: decoded.email,
+          role: decoded.role
+        },
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRATION || "5m" }
+        );
+        res.cookie("accessToken", accessToken, {
+          ...cookieConfig,
+          maxAge: 1000 * 60 * 5
+        });
+        return res.status(200).json({ sucesso: "Token renovado", accessToken });
+      });
     } catch (error) {
       return res.status(500).json({ erro: error });
     }

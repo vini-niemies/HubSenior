@@ -1,8 +1,6 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import conn from "../config/conn.js";
 import Nutricionista from "../models/Nutricionista.js";
-
 
 class NutricionistaController {
   async CriarNutricionista(req, res) {
@@ -25,9 +23,7 @@ class NutricionistaController {
   }
   async VerDadosNutricionista(req, res) {
     try {
-      const token = req.cookies.accessToken;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const id = decoded.id;
+      const id = req.user.id;
       conn.execute("SELECT * FROM nutricionistas WHERE id = ?", [id], (error, rows) => {
         if (error) return res.status(500).json({ erro: error });
         return res.status(200).json({ sucesso: rows[0] });
@@ -38,9 +34,7 @@ class NutricionistaController {
   }
   async DeletarNutricionista(req, res) {
     try {
-      const token = req.cookies.accessToken;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const id = decoded.id;
+      const id = req.user.id;
       conn.execute("DELETE FROM nutricionistas WHERE id = ?", [id], (error, results) => {
         if (error) return res.status(500).json({ erro: error });
         return res.status.json({ sucesso: "Usuário excluído com sucesso" });

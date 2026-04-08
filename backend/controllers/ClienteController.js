@@ -1,15 +1,12 @@
 import Cliente from "../models/Cliente.js";
 import bcrypt from "bcrypt";
 import conn from "../config/conn.js";
-import jwt from "jsonwebtoken";
 
 class ClienteController {
 
   async VerDadosCliente(req, res) {
     try {
-      const token = req.cookies.accessToken;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const id = decoded.id;
+      const id = req.user.id;
       conn.execute("SELECT * FROM clientes WHERE id = ?", [id], (error, rows) => {
         if (error) return res.status(404).json({ erro: "Usuário não encontrado" });
         return res.status(200).json({ sucesso: rows[0] });
@@ -44,9 +41,7 @@ class ClienteController {
 
   async DeletarCliente(req, res) {
     try {
-      const token = req.cookies.accessToken;
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const id = decoded.id;
+      const id = req.user.id;
       conn.execute("DELETE FROM clientes WHERE id = ?", [id], (error, results) => {
         if (error) return res.status(500).json({ erro: "Falha ao deletar usuário" });
         return res.status(200).json({ sucesso: "Usuário deletado com sucesso"});

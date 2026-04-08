@@ -1,18 +1,12 @@
 class Refeicao {
-  constructor(idDieta, nomeRefeicao, horario, detalhesAlimentos) {
+  constructor(idDieta, nomeRefeicao, horario) {
     this.idDieta = idDieta;
     this.nomeRefeicao = nomeRefeicao;
     this.horario = horario;
-    this.detalhesAlimentos = detalhesAlimentos;
   }
 
   toArray() {
-    return [
-      this.idDieta,
-      this.nomeRefeicao,
-      this.horario,
-      this.detalhesAlimentos
-    ];
+    return [this.idDieta, this.nomeRefeicao, this.horario];
   }
 }
 

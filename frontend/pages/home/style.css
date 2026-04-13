@@ -1,0 +1,56 @@
+.home-box {
+  width: min(420px, 92vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  transition: 0.3s;
+}
+
+.home-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
+}
+
+.home-btn:active {
+  transform: scale(0.98);
+}
+
+.home-link {
+  margin-top: 8px;
+  color: #f9f9f9;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+/* Botão "Já tenho conta" */
+.home-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: transparent;
+  color: #F27121;
+  border: 2px solid #F27121;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.home-link:hover {
+  background: #F27121;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(242, 113, 33, 0.5);
+}

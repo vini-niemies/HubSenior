@@ -1,0 +1,76 @@
+.form-card {
+  width: min(700px, 92vw);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-card h1 {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #f9f9f9;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #f27121;
+}
+
+.form-group button {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.messageField {
+  color: #ffd2d2;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  min-height: 18px;
+}
+
+.voltar-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #f27121;
+  text-decoration: none;
+}
+
+.voltar-link:hover {
+  text-decoration: underline;
+}

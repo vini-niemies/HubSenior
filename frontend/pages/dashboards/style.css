@@ -1,0 +1,162 @@
+.login-box {
+  width: 90%;
+  min-height: 90%;
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
+.login-box:hover {
+  transform: translateY(0);
+}
+
+.title-nutri {
+  text-align: left;
+  padding: 1em 0;
+  margin: 0 16px;
+  color: white;
+  font-size: 24px;
+}
+
+.title-top {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  max-width: 90%;
+  flex-wrap: wrap;
+}
+
+.title-top button {
+  width: fit-content;
+  padding: 0.75rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.title-top button:hover {
+  background: #e55a00;
+}
+
+.title-clientes {
+  font-size: 24px;
+  color: white;
+}
+
+.title-line {
+  width: 100%;
+  margin: 10px 0;
+}
+
+
+.cards-div-message {
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 1em;
+}
+
+.title-top-hud {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1em;
+  align-items: center;
+}
+
+.title-codigo {
+  font-size: 24px;
+  color: white;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.copiar-codigo {
+  color: white;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  transition: transform 0.25s ease-out;
+}
+
+.copiar-codigo:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.clientes-card-container {
+  width: 100%;
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+  flex-wrap: wrap;
+}
+
+.card-cliente {
+  max-width: 300px;
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+  border: 1px solid white;
+  color: white;
+  transition: transform 0.25s ease-out;
+}
+
+.card-cliente:hover {
+  transform: scale(1.02);
+}
+
+.card-content {
+  padding: 1em;
+}
+
+.card-texto {
+  text-align: left;
+}
+
+.card-texto span {
+  font-weight: bold;
+  color: #ff6600;
+}
+
+.card-botoes-container {
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1em;
+}
+
+.card-botoes {
+  padding: 0.5em;
+  background-color: #e55a00;
+  border-radius: 4px;
+  transition: transform 0.25s ease-out;
+}
+
+.card-botoes:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+@media screen and (max-width: 576px) {
+  .title-top-hud {
+    gap: 1em;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+@media screen and (max-width: 890px) {
+  .clientes-card-container {
+    align-items: center;
+    justify-content: center;
+  }
+}

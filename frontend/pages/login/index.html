@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+
+  <div class="background"></div>
+
+  <main class="container">
+    <form class="login-box">
+
+      <h1 class="logo">HubSenior</h1>
+      <p class="subtitle">Cuidando da sua saúde!</p>
+
+      <div class="messageField"></div>
+
+      <div class="input-box select-box">
+        <select id="role">
+          <option value="cliente">Cliente</option>
+          <option value="nutri">Nutricionista</option>
+        </select>
+      </div>
+
+      <div class="input-box">
+        <input type="email" id="email" required>
+        <label>Email</label>
+      </div>
+
+      <div class="input-box senha-box">
+        <input type="password" id="senha" required>
+        <label>Senha</label>
+        <button type="button" class="toggle-password">👁️</button>
+      </div>
+
+      <button id="loginBtn" type="submit">Entrar</button>
+      <p class="signup-text">Não possui conta? <a href="../home/index.html" class="signup-link">Criar conta</a>
+      </p>
+    </form>
+  </main>
+
+  <script src="./index.js"></script>
+
+</body>
+
+</html>

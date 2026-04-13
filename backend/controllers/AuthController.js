@@ -67,7 +67,6 @@ class AuthController {
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRATION || "5m" }
           );
-          console.log(accessToken)
           const refreshToken = jwt.sign(
             { id: rows[0].id_nutricionista, email: rows[0].email, role: "nutricionista" },
             process.env.JWT_SECRET,

@@ -7,6 +7,7 @@ async function criarCliente(e) {
   const dataNasc = document.getElementById("clienteDataNascimento").value;
   const objetivo = document.getElementById("clienteObjetivo").value;
   const endereco = document.getElementById("clienteEndereco").value;
+  const email2 = document.getElementById("clienteEmail2").value;
 
   const user = {
     codigo,
@@ -15,8 +16,11 @@ async function criarCliente(e) {
     senha,
     dataNasc,
     objetivo,
-    endereco
+    endereco,
+    email2
   }
+
+  console.log(user)
   const response = await fetch("http://localhost:3000/user/cliente", {
     method: "POST",
     body: JSON.stringify(user),
@@ -24,6 +28,7 @@ async function criarCliente(e) {
       "Content-type": "application/json"
     }
   });
+
   const data = await response.json();
   if (data.erro) return console.log(data.erro);
   if (data.sucesso) return window.location.href = "../login/index.html";

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior | Dieta</title>
+  <link rel="stylesheet" href="../login/style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div class="background"></div>
+  <main class="container">
+    <div class="login-box">
+      <h1 class="logo title-top">HubSenior <button id="logouBtn">Logout</button></h1>
+      <hr class="title-line">
+      <form class="login-box">
+
+        <div class="input-box">
+          <input type="text" id="idCliente" required>
+          <label class="input-label">Id do Cliente</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="tituloDieta" required>
+          <label class="input-label">Título</label>
+        </div>
+
+        <div class="input-box">
+          <input type="number" id="nRefeicoesInput" min="1" max="6" required>
+          <label class="input-label" for="nRefeicoesInput">Número de refeições</label>
+        </div>
+
+        <div class="refeicoes-container">
+          
+        </div>
+
+        <div class="input-box date-field">
+          <input type="date" id="dataInicio" required>
+          <label class="input-label">Data de início</label>
+        </div>
+        <div class="input-box date-field">
+          <input type="date" id="dataFim" required>
+          <label class="input-label">Data de término</label>
+        </div>
+        <div class="input-box">
+          <input type="text" id="objetivosDieta" required>
+          <label class="input-label">Objetivos</label>
+        </div>
+        <div class="input-box">
+          <button id="cadastrarDietaBtn" type="submit">Criar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script src="../../functions/controlarSessao.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

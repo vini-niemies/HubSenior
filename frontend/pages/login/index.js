@@ -24,7 +24,11 @@ async function login(e) {
     console.log(response);
     if (response.erro) return messageField.textContent = response.erro;
     if (response.sucesso) {
-      window.location.href = user.role === "nutri" ? "../dashboards/dashboardnutricionista.html" : ""; 
+      if (user.role === "nutri") {
+        window.location.href = "../dashboards/dashboardnutricionista.html";
+      } else if (user.role === "cliente") {
+        window.location.href = "../dashboards/dashboardcliente.html"
+      }
     }
   } catch (error) {
     messageField.textContent = "Erro ao tentar realizar login";

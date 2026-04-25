@@ -14,13 +14,14 @@ class DietaController {
         data_fim,
         titulo_dieta,
         objetivos,
-        observacoes_gerais,
         refeicoes
       } = req.body;
 
       if (!id_cliente || !data_inicio || !titulo_dieta || refeicoes.length < 1) {
         return res.status(400).json({ erro: "Campos obrigatorios faltando" });
       }
+
+      if (refeicoes.length > 6) return res.status(400).json({ erro: "Limite de refeições (6) ultrapassado" }); 
 
       for (const refeicao of refeicoes) {
         if (!refeicao.nome_refeicao) {
@@ -46,15 +47,14 @@ class DietaController {
             data_inicio,
             data_fim || null,
             titulo_dieta,
-            objetivos || null,
-            observacoes_gerais || null
+            objetivos || null
           );
 
           conn.beginTransaction((transactionError) => {
             if (transactionError) return res.status(500).json({ erro: transactionError });
 
             conn.execute(
-              "INSERT INTO dietas (id_cliente, id_nutricionista, data_inicio, data_fim, titulo_dieta, objetivos, observacoes_gerais) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              "INSERT INTO dietas (id_cliente, id_nutricionista, data_inicio, data_fim, titulo_dieta, objetivos) VALUES (?, ?, ?, ?, ?, ?)",
               dieta.toArray(),
               (dietaError, dietaResult) => {
                 if (dietaError) {
@@ -64,27 +64,24 @@ class DietaController {
                 const refeicoesValues = refeicoes.map((refeicao) => [
                   dietaResult.insertId,
                   refeicao.nome_refeicao,
-                  refeicao.horario || null,
-                  refeicao.detalhes_alimentos || null
+                  refeicao.horario || null
                 ]);
+                
+                const parametros = refeicoesValues.map(() => "(?, ?, ?)").join(", ");
+                const valores = refeicoesValues.flat();
 
-                conn.query(
-                  "INSERT INTO refeicoes (id_dieta, nome_refeicao, horario, detalhes_alimentos) VALUES ?",
-                  [refeicoesValues],
-                  (refeicoesError) => {
-                    if (refeicoesError) {
-                      return conn.rollback(() => res.status(500).json({ erro: refeicoesError }));
+                conn.execute(
+                  `INSERT INTO refeicoes (id_dieta, nome_refeicao, horario) VALUES ${parametros}`, valores, (erroRefeicoes) => {
+                    if (erroRefeicoes) {
+                      return conn.rollback(() => res.status(500).json({ erro: erroRefeicoes }));
                     }
 
-                    conn.commit((commitError) => {
-                      if (commitError) {
-                        return conn.rollback(() => res.status(500).json({ erro: commitError }));
+                    conn.commit((erroCommit) => {
+                      if (erroCommit) {
+                        return conn.rollback(() => res.status(500).json({ erro: erroCommit }));
                       }
 
-                      return res.status(201).json({
-                        sucesso: "Dieta cadastrada com sucesso",
-                        id_dieta: dietaResult.insertId
-                      });
+                      return res.status(201).json({ sucesso: "Dieta cadastrada com sucesso" });
                     });
                   }
                 );
@@ -103,8 +100,8 @@ class DietaController {
       const role = req.user.role;
       const { id } = req.body;
       const query = role === "nutri" ? "SELECT * FROM dietas WHERE id_cliente = ? AND id_nutricionista = ?" :
-      "SELECT * FROM dietas WHERE id_cliente = ?";
-      const params = role === "nutri" ? [req.user.id, id] : [id];
+        "SELECT * FROM dietas WHERE id_cliente = ?";
+      const params = role === "nutri" ? [req.user.id, id] : [req.user.id];
       conn.execute(query, [params], (error, dietasRows) => {
         if (error) return res.status(500).json({ erro: error });
         if (dietasRows.length <= 0) {

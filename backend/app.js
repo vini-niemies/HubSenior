@@ -8,6 +8,7 @@ import nutriRotas from "./routes/NutricionistaRoutes.js";
 import clienteRotas from "./routes/ClienteRoutes.js";
 import authRotas from "./routes/AuthRoutes.js";
 import dietaRotas from "./routes/DietaRoutes.js";
+import consultaRotas from "./routes/ConsultaRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +27,7 @@ app.use(nutriRotas);
 app.use(clienteRotas);
 app.use(authRotas);
 app.use(dietaRotas);
+app.use(consultaRotas);
 
 conn.connect((error) => {
   if (error) console.log("erro" + error);

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior | Consulta</title>
+  <link rel="stylesheet" href="../login/style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div class="background"></div>
+  <main class="container">
+    <div class="login-box">
+      <h1 class="logo title-top">HubSenior <a class="ancoraDash" href="../dashboards/dashboardnutricionista.html">Dashboard</a></h1>
+      <hr class="title-line">
+      <form class="login-box" id="consultaForm">
+        <div class="input-box">
+          <input type="number" id="idCliente" required min="1">
+          <label class="input-label">Id do Cliente</label>
+        </div>
+
+        <div class="input-box date-field">
+          <input type="datetime-local" id="dataConsulta" required>
+          <label class="input-label">Data da consulta</label>
+        </div>
+
+        <div class="input-box">
+          <input type="number" id="pesoAtual" step="0.01" min="0">
+          <label class="input-label">Peso atual (kg)</label>
+        </div>
+
+        <div class="input-box">
+          <input type="number" id="altura" step="0.01" min="0">
+          <label class="input-label">Altura (m)</label>
+        </div>
+
+        <div class="input-box text-area-box">
+          <textarea id="alergias" rows="3"></textarea>
+          <label class="input-label textarea-label">Alergias</label>
+        </div>
+
+        <div class="input-box text-area-box">
+          <textarea id="restricoesAlimentares" rows="3"></textarea>
+          <label class="input-label textarea-label">Restrições alimentares</label>
+        </div>
+
+        <div class="input-box text-area-box">
+          <textarea id="historicoFamiliar" rows="3"></textarea>
+          <label class="input-label textarea-label">Histórico familiar</label>
+        </div>
+
+        <div class="input-box text-area-box">
+          <textarea id="observacoes" rows="3"></textarea>
+          <label class="input-label textarea-label">Observações</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="metodosUtilizados" maxlength="50">
+          <label class="input-label">Métodos utilizados</label>
+        </div>
+
+        <div class="input-box">
+          <button id="cadastrarConsultaBtn" type="submit">Salvar Consulta</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script src="../../functions/controlarSessao.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

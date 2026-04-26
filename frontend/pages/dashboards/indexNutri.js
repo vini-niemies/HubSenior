@@ -90,8 +90,17 @@ async function carregarDietas(id, card) {
   listaDietas.innerHTML = `<p class="cards-div-message">Carregando dietas...</p>`;
 
   try {
-    const responseDietas = await fetch(`http://localhost:3000/dieta?id=` + id);
+    const [responseDietas, responseConsulta] = await Promise.all([
+      fetch(`http://localhost:3000/dieta?id=` + id),
+      fetch(`http://localhost:3000/consulta?id=` + id)
+    ]);
     const dataDietas = await responseDietas.json();
+    const dataConsulta = await responseConsulta.json();
+
+    const possuiConsulta = Boolean(dataConsulta?.sucesso?.possuiConsulta);
+    const botaoRegistrarConsulta = !possuiConsulta
+      ? `<a class="card-botoes" href="../consulta/index.html?id_cliente=${id}">Registrar Consulta</a>`
+      : "";
 
     if (dataDietas.erro) {
       listaDietas.innerHTML = `<p class="cards-div-message">Falha ao encontrar dietas</p>`;
@@ -102,6 +111,7 @@ async function carregarDietas(id, card) {
     if (dietas.length <= 0) {
       listaDietas.innerHTML = `<p class="cards-div-message">Nenhuma dieta cadastrada</p>
       <a class="card-botoes" href="../dieta/index.html?id_cliente=${id}">Criar Dieta</a>
+      ${botaoRegistrarConsulta}
       `;
       return;
     }
@@ -111,6 +121,7 @@ async function carregarDietas(id, card) {
       <div class="card-content">
         <div class="card-texto"><span>Título:</span> ${dieta.titulo_dieta}</div>
         <div class="card-botoes-container dieta-acoes">
+          ${botaoRegistrarConsulta}
           <div class="card-botoes" data-dieta-id="${dieta.id_dieta}" onclick="excluirDieta(${dieta.id_dieta}, ${id})">Excluir Dieta</div>
           <a class="card-botoes" data-dieta-id="${dieta.id_dieta}" href="../dieta/index.html?id_dieta=${dieta.id_dieta}">Atualizar Dieta</a>
         </div>

@@ -1,0 +1,84 @@
+CREATE DATABASE hubsenior;
+USE hubsenior;
+
+CREATE TABLE nutricionistas (
+    id_nutricionista INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    crn VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20),
+    instagram VARCHAR(20),
+    endereco VARCHAR(100),
+    codigo VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    id_nutricionista INT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    data_nascimento DATE,
+    endereco VARCHAR(100),
+    objetivo VARCHAR(255),
+    codigo_nutricionista VARCHAR(255),
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
+);
+
+CREATE TABLE consultas (
+    id_consulta INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT,
+    data_consulta DATETIME NOT NULL, 
+    peso_atual DECIMAL(5,2),
+    altura DECIMAL(3,2),
+    alergias TEXT,
+    restricoes_alimentares TEXT,
+    historico_familiar TEXT,
+    observacoes TEXT,
+    metodos_utilizados VARCHAR(50),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
+);
+
+CREATE TABLE resultados_exames (
+    id_exame INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT NOT NULL,
+    data_realizacao DATE NOT NULL,
+    percentual_gordura DECIMAL(4,2),
+    massa_magra DECIMAL(5,2),
+    gordura_visceral DECIMAL(5,2),
+    taxa_metabolica_basal DECIMAL(10,2),
+    colesterol_total DECIMAL(10,2),
+    glicemia_jejum DECIMAL(10,2),
+    outros_marcadores TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista)
+);
+
+CREATE TABLE dietas (
+    id_dieta INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT,
+    data_inicio DATE NOT NULL,
+    data_fim DATE,
+    titulo_dieta VARCHAR(100),
+    objetivos TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
+);
+
+CREATE TABLE refeicoes (
+    id_refeicao INT AUTO_INCREMENT PRIMARY KEY,
+    id_dieta INT NOT NULL,
+    nome_refeicao VARCHAR(100) NOT NULL,
+    horario TIME,
+    FOREIGN KEY (id_dieta) REFERENCES dietas(id_dieta) ON DELETE CASCADE
+);
+
+SELECT * FROM clientes;
+SELECT * FROM refeicoes;
+SELECT * FROM dietas;
+SELECT * FROM nutricionistas;

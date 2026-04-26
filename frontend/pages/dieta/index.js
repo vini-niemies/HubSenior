@@ -53,7 +53,7 @@ async function atualizarDieta(e) {
 
     if (document.querySelector(".refeicao-box")) {
         const parent = document.querySelectorAll(".refeicao-box");
-        parent.forEach(p => {
+        for (p of parent) {
             const nome_refeicao = p.querySelector(".tituloRefeicao").value;
             const horario = p.querySelector(".horarioRefeicao").value;
             const refeicao = {
@@ -61,7 +61,7 @@ async function atualizarDieta(e) {
                 horario
             }
             refeicoes.push(refeicao);
-        });
+        };
     }
 
     const dieta = {
@@ -130,7 +130,7 @@ async function cadastrarDieta(e) {
 
     if (document.querySelector(".refeicao-box")) {
         const parent = document.querySelectorAll(".refeicao-box");
-        parent.forEach(p => {
+        for (p of parent) {
             const nome_refeicao = p.querySelector(".tituloRefeicao").value;
             const horario = p.querySelector(".horarioRefeicao").value;
             const refeicao = {
@@ -138,7 +138,7 @@ async function cadastrarDieta(e) {
                 horario
             }
             refeicoes.push(refeicao);
-        });
+        };
     }
 
     const dieta = {

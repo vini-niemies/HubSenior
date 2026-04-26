@@ -17,8 +17,12 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+<<<<<<< Updated upstream
     "mysql2": "^3.22.0",
+=======
+    "mysql2": "^3.22.2",
+>>>>>>> Stashed changes
     "nodemon": "^3.1.14",
-    "npm": "^11.12.1"
+    "npm": "^11.13.0"
   }
 }

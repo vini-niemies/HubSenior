@@ -10,7 +10,7 @@ class AuthController {
     try {
       const user = req.user;
       if (!user) return res.status(401).json({ erro: "Sem permissão para acessar esse recurso" });
-      return res.status(200).json({ sucesso: "Usuário permitido" });
+      return res.status(200).json({ sucesso: user });
     } catch(error) {
       return res.status(500).json({ erro: error });
     }

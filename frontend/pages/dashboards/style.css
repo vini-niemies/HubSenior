@@ -59,6 +59,8 @@
   font-weight: bold;
   font-size: 24px;
   text-align: center;
+  align-self: center;
+  padding: 0 0 1em 0;
 }
 
 .title-top-hud {
@@ -96,6 +98,7 @@
   margin-top: 1em;
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 1.5em;
   justify-content: center;
 }
@@ -103,6 +106,7 @@
 .card-cliente {
   width: 100%;
   max-width: 300px;
+  min-height: 170px;
   flex: 1 1 250px;
   border-radius: 4px;
   backdrop-filter: blur(10px);
@@ -150,6 +154,8 @@
   background-color: #e55a00;
   border-radius: 4px;
   transition: transform 0.25s ease-out;
+  text-decoration: none;
+  color: white;
 }
 
 .card-botoes:hover {
@@ -157,10 +163,49 @@
   cursor: pointer;
 }
 
+.ancora {
+  text-decoration: none;
+  color: #e55a00;
+}
+
+.lista-dietas {
+  width: 100%;
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card-info-visible {
+  display: flex;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.messageField {
+  text-align: left;
+  color: #fff;
+  font-size: 28px;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-size: 24px;
+}
+
+.lista-dietas {
+  grid-template-columns: 1fr;
+}
+
 @media screen and (max-width: 576px) {
   .title-top-hud {
     gap: 1em;
     flex-direction: column;
     justify-content: flex-start;
+  }
+
+  .messageField {
+    font-size: 16px;
   }
 }

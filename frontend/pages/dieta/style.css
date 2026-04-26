@@ -60,94 +60,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-form.login-box {
-  width: 100%;
-  min-height: auto;
-  max-height: none;
-  overflow: visible;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  text-align: left;
-}
-
-form.login-box:hover {
-  transform: none;
-}
-
-form.login-box .input-box {
-  margin-bottom: 1.35rem;
-}
-
-form.login-box .input-box input {
-  width: 100%;
-  padding: 0.85rem 0.3rem;
-  border: none;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  color: #f9f9f9;
-  font-size: 0.98rem;
-  outline: none;
-  transition: border-color 0.25s ease;
-}
-
-form.login-box .input-box select {
-  width: 100%;
-  padding: 1.1rem 1.9rem 0.5rem 0.3rem;
-  border: none;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  color: #f9f9f9;
-  font-size: 0.98rem;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  transition: border-color 0.25s ease;
-}
-
-form.login-box .input-box input:focus {
-  border-bottom-color: #f27121;
-}
-
-form.login-box .input-box select:focus {
-  border-bottom-color: #f27121;
-}
-
-form.login-box .input-box input::placeholder {
-  color: rgba(255, 255, 255, 0.72);
-}
-
-form.login-box .input-label {
-  color: rgba(255, 255, 255, 0.72);
-}
-
-form.login-box .input-box input:focus ~ .input-label,
-form.login-box .input-box input:valid ~ .input-label {
-  color: #f27121;
-}
-
-form.login-box .input-box select ~ .input-label {
-  top: -0.45rem;
-  font-size: 0.75rem;
-  color: #f27121;
-}
-
-form.login-box .input-box input[type="date"] {
-  color-scheme: dark;
-  padding-top: 1.1rem;
-}
-
-form.login-box .input-box input[type="date"] ~ .input-label {
-  top: -0.45rem;
-  font-size: 0.75rem;
-  color: #f27121;
-}
-
 #cadastrarDietaBtn {
   width: 100%;
   padding: 0.75rem;
@@ -173,6 +85,39 @@ form.login-box .input-box input[type="date"] ~ .input-label {
   padding: 1em;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+}
+
+form.login-box {
+  width: 90%;
+  align-self: center;
+}
+
+.ancoraDash {
+  width: fit-content;
+  font-size: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #F27121, #ff8c42);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.ancoraDash:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
+}
+
+.ancoraDash:active {
+  transform: scale(0.98);
 }
 
 @media screen and (max-width: 576px) {

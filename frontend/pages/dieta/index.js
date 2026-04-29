@@ -1,6 +1,7 @@
 const quantidadeRefeicoes = document.getElementById("nRefeicoesInput");
 const cadastrarDietaBtn = document.getElementById("cadastrarDietaBtn");
 const refeicoesContainer = document.querySelector(".refeicoes-container");
+const voltar = document.getElementById("voltarBtn");
 
 document.addEventListener("DOMContentLoaded", () => {
     const param = new URLSearchParams(window.location.search);
@@ -114,6 +115,7 @@ async function carregarDieta() {
         carregarCardRefeicao(dados.refeicoes.length, dados.refeicoes);
         cadastrarDietaBtn.textContent = "Atualizar";
         cadastrarDietaBtn.onclick = atualizarDieta;
+        voltar.onclick = sairSemSalvar;
     } catch (error) {
         console.log(error);
     }
@@ -167,4 +169,9 @@ async function cadastrarDieta(e) {
     } catch (error) {
         console.log(error);
     }
+}
+
+function sairSemSalvar() {
+    alert("Saindo sem salvar edição da dieta");
+    return window.location.href = "../dashboards/dashboardnutricionista.html";
 }

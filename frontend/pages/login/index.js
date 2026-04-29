@@ -21,7 +21,6 @@ async function login(e) {
       credentials: "include"
     });
     const response = await req.json();
-    console.log(response);
     if (response.erro) return messageField.textContent = response.erro;
     if (response.sucesso) {
       if (user.role === "nutri") {

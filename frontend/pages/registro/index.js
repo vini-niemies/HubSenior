@@ -1,3 +1,5 @@
+const mensagemErroCampo = document.querySelector(".messageField");
+
 async function criarCliente(e) {
   e.preventDefault();
   const codigo = document.getElementById("clienteCodigo").value;
@@ -25,9 +27,13 @@ async function criarCliente(e) {
     }
   });
   const data = await response.json();
-  if (data.erro) return console.log(data.erro);
-  if (data.sucesso) return window.location.href = "../login/index.html";
-} 
+  if (data.erro) return mensagemErroCampo.textContent = data.erro;
+  if (data.sucesso) {
+    mensagemErroCampo.textContent = ""
+    window.location.href = "../login/index.html";
+    return;
+  };
+}
 
 async function criarNutricionista(e) {
   e.preventDefault();
@@ -55,7 +61,7 @@ async function criarNutricionista(e) {
     }
   });
   const data = await response.json();
-  if (data.erro) return console.log(data.erro);
+  if (data.erro) return mensagemErroCampo.textContent = data.erro;
   if (data.sucesso) return window.location.href = "../login/index.html";
 }
 

@@ -6,6 +6,12 @@
   gap: 1em;
 }
 
+.messageField {
+  margin-bottom: 20px;
+  background-color: rgba(83, 0, 0, 0.281);
+  color: red;
+  border-radius: 4px;
+}
 
 .cliente, .nutricionista {
   display: none;

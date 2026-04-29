@@ -33,9 +33,9 @@ class AuthController {
       if (role === "cliente") {
         conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
           if (error) return res.status(500).json({ erro: error });
-          if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
+          if (rows.length <= 0) return res.status(404).json({ erro: "E-mail ou senha incorretos" });
           const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
-          if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
+          if (!verificaSenha) return res.status(400).json({ erro: "E-mail ou senha incorretos" });
           const accessToken = jwt.sign(
             { id: rows[0].id_cliente, email: rows[0].email, role: "cliente" },
             process.env.JWT_SECRET,

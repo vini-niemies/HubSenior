@@ -97,7 +97,11 @@ async function atualizarDieta(e) {
 }
 async function carregarDieta() {
     const param = new URLSearchParams(window.location.search);
-    if (!param || !param.get("id_dieta")) return cadastrarDietaBtn.onclick = cadastrarDieta;
+    if (!param || !param.get("id_dieta")) {
+        cadastrarDietaBtn.onclick = cadastrarDieta;
+        voltar.onclick = () => sairSemSalvar("Tem certeza que deseja sair?");
+        return;
+    }
 
     try {
         const response = await fetch(`http://localhost:3000/dieta/${param.get("id_dieta")}`, {
@@ -115,7 +119,7 @@ async function carregarDieta() {
         carregarCardRefeicao(dados.refeicoes.length, dados.refeicoes);
         cadastrarDietaBtn.textContent = "Atualizar";
         cadastrarDietaBtn.onclick = atualizarDieta;
-        voltar.onclick = sairSemSalvar;
+        voltar.onclick = () => sairSemSalvar("Tem certeza que deseja sair? (alterações feitas não serão salvas)");
     } catch (error) {
         console.log(error);
     }
@@ -151,7 +155,7 @@ async function cadastrarDieta(e) {
         objetivos,
         refeicoes
     };
-
+    
     try {
         const req = await fetch("http://localhost:3000/dieta", {
             method: "POST",
@@ -171,7 +175,29 @@ async function cadastrarDieta(e) {
     }
 }
 
-function sairSemSalvar() {
-    alert("Saindo sem salvar edição da dieta");
-    return window.location.href = "../dashboards/dashboardnutricionista.html";
+function fecharModal() {
+	document.querySelector(".modal").classList.remove("is-active");
+	document.querySelector(".modal").innerHTML = "";
+}
+
+function abrirModal(titulo, descricao) {
+	document.querySelector(".modal").classList.add("is-active");
+	document.querySelector(".modal").innerHTML += `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button id="modalAcceptBtn">Sim</button>
+        <button onclick=fecharModal()>Não</button>
+      </div>
+    </div>
+	`
+}
+
+function sairSemSalvar(descricao) {
+    abrirModal("Sair", descricao);
+    if (!document.getElementById("modalAcceptBtn")) return;
+    document.getElementById("modalAcceptBtn").onclick = () => {
+        return window.location.href = "../dashboards/dashboardnutricionista.html";
+    }
 }

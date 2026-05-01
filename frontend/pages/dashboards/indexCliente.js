@@ -16,27 +16,27 @@ function formatarHorario(horario) {
 }
 
 async function logout() {
-  const response = await fetch("http://localhost:3000/auth/logout", {
-    method: "POST"
-  });
-  const data = await response.json();
-  if (data.error) {
-    const response = await fetch("http://localhost:3000/auth/me", {
-      method: "POST"
-    });
-    const data = await response.json();
-    if (data.erro) {
-      const responseRefresh = await fetch("http://localhost:3000/auth/refresh", {
-        method: "POST"
-      });
-      const dataRefresh = await responseRefresh.json();
-      if (dataRefresh.erro) return window.location.href = "../home/index.html";
-      window.location.reload();
-    }
-  };
-  if (data.sucesso) {
-    window.location.href = "../home/index.html";
-  }
+	const response = await fetch("http://localhost:3000/auth/logout", {
+		method: "POST"
+	});
+	const data = await response.json();
+	if (data.error) {
+		const response = await fetch("http://localhost:3000/auth/me", {
+			method: "POST"
+		});
+		const data = await response.json();
+		if (data.erro) {
+			const responseRefresh = await fetch("http://localhost:3000/auth/refresh", {
+				method: "POST"
+			});
+			const dataRefresh = await responseRefresh.json();
+			if (dataRefresh.erro) return window.location.href = "../home/index.html";
+			window.location.reload();
+		}
+	};
+	if (data.sucesso) {
+		window.location.href = "../home/index.html";
+	}
 }
 
 function renderizarDietas(dietas) {
@@ -78,6 +78,25 @@ async function carregarDietasCliente() {
 	return await response.json();
 }
 
+function fecharModal() {
+	document.querySelector(".modal").classList.remove("is-active");
+	document.querySelector(".modal").innerHTML = "";
+}
+
+function abrirModal(titulo, descricao) {
+	document.querySelector(".modal").classList.add("is-active");
+	document.querySelector(".modal").innerHTML += `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button id="modalAcceptBtn">Sim</button>
+        <button onclick=fecharModal()>Não</button>
+      </div>
+    </div>
+	`
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
 	try {
 		const responseCliente = await fetch("http://localhost:3000/user/cliente", {
@@ -102,4 +121,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 });
 
-logouBtn.addEventListener("click", logout);
+logouBtn.addEventListener("click", () => {
+	abrirModal("Sair", "Tem certeza que deseja sair?");
+	if (!document.getElementById("modalAcceptBtn")) return;
+	document.getElementById("modalAcceptBtn").onclick = async () => {
+		await logout();
+	}
+});

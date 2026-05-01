@@ -37,10 +37,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
 
                     <button id="loginBtn" type="submit">Salvar</button>
-                    <a class=ancoraBtn href="../dashboards/dashboardnutricionista.html">Voltar</a>
+                    <button class=ancoraBtn id="voltarBtn">Voltar</button>
                     <button id="excluirContaBtnCliente" type="button" onclick="excluirConta()">Excluir Conta</button>
                 </form>
         `;
+
+        document.getElementById("voltarBtn").onclick = (e) => {
+            e.preventDefault();
+            abrirModal("Sair", "Deseja sair?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = () => {
+                window.location.href = "../dashboards/dashboardnutricionista.html";
+            }
+        }
 
         const formAtualizarNutricionista = document.getElementById("formAtualizarNutricionista");
         formAtualizarNutricionista.addEventListener("submit", async (event) => {
@@ -54,11 +63,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 endereco: document.getElementById("enderecoNutriInput").value
             };
 
-            const resultado = await atualizarDadosNutricionista(payload);
-            if (resultado?.sucesso) {
-                window.location.href = "../dashboards/dashboardnutricionista.html";
-            } else {
-                alert(resultado?.erro || "Erro ao atualizar dados");
+            abrirModal("Salvar Alterações", "Deseja salvar as alterações?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = async () => {
+                const resultado = await atualizarDadosNutricionista(payload);
+                if (resultado?.sucesso) {
+                    return window.location.href = "../dashboards/dashboardnutricionista.html";
+                } else {
+                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                }
             }
         });
     } else if (data.sucesso.role === "cliente") {
@@ -89,14 +102,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
 
                     <button id="loginBtn" type="submit">Salvar</button>
-                    <a class=ancoraBtn href="../dashboards/dashboardcliente.html">Voltar</a>
+                    <button class=ancoraBtn id="voltarBtn">Voltar</button>
                     <button id="excluirContaBtnCliente" type="button" onclick="excluirConta()">Excluir Conta</button>
                 </form>`;
+
+        document.getElementById("voltarBtn").onclick = (e) => {
+            e.preventDefault();
+            abrirModal("Sair", "Deseja sair?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = () => {
+                window.location.href = "../dashboards/dashboardcliente.html";
+            }
+        }
 
         const formAtualizarCliente = document.getElementById("formAtualizarCliente");
         formAtualizarCliente.addEventListener("submit", async (event) => {
             event.preventDefault();
-
             const payload = {
                 nome: document.getElementById("nomeInput").value,
                 email: document.getElementById("emailInput").value,
@@ -104,12 +125,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 endereco: document.getElementById("enderecoInput").value,
                 objetivo: document.getElementById("objetivoInput").value
             };
-
-            const resultado = await atualizarDadosCliente(payload);
-            if (resultado?.sucesso) {
-                window.location.href = "../dashboards/dashboardcliente.html";
-            } else {
-                alert(resultado?.erro || "Erro ao atualizar dados");
+            abrirModal("Salvar Alterações", "Deseja salvar as alterações?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = async () => {
+                const resultado = await atualizarDadosCliente(payload);
+                if (resultado?.sucesso) {
+                    return window.location.href = "../dashboards/dashboardcliente.html";
+                } else {
+                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                }
             }
         });
     }
@@ -143,23 +167,26 @@ async function logout() {
 }
 async function excluirConta() {
     try {
-        const response = await fetch("http://localhost:3000/auth/me", {
-            method: "POST",
-            credentials: "include"
-        });
-        const data = await response.json();
-        if (data.erro) return;
-        const URI = data.sucesso.role === "nutricionista"
-            ? "http://localhost:3000/user/nutricionista"
-            : "http://localhost:3000/user/cliente";
-        const req = await fetch(URI, {
-            method: "DELETE",
-            credentials: "include"
-        });
-        const reqData = await req.json();
-        if (reqData.erro) return;
-        await logout();
-        window.location.href = "../home/index.html";
+        abrirModal("Excluir Conta", "Tem certeza que deseja excluir sua conta? (essa ação não pode ser desfeita)");
+        if (!document.getElementById("modalAcceptBtn")) return;
+        document.getElementById("modalAcceptBtn").onclick = async () => {
+            const response = await fetch("http://localhost:3000/auth/me", {
+                method: "POST",
+                credentials: "include"
+            });
+            const data = await response.json();
+            if (data.erro) return;
+            const URI = data.sucesso.role === "nutricionista"
+                ? "http://localhost:3000/user/nutricionista"
+                : "http://localhost:3000/user/cliente";
+            const req = await fetch(URI, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const reqData = await req.json();
+            if (reqData.erro) return;
+            window.location.href = "../home/index.html";
+        }
     } catch (error) {
         console.log(error);
     }
@@ -187,4 +214,23 @@ async function atualizarDadosNutricionista(payload) {
     });
 
     return await response.json();
+}
+
+function fecharModal() {
+    document.querySelector(".modal").classList.remove("is-active");
+    document.querySelector(".modal").innerHTML = "";
+}
+
+function abrirModal(titulo, descricao) {
+    document.querySelector(".modal").classList.add("is-active");
+    document.querySelector(".modal").innerHTML += `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button id="modalAcceptBtn">Sim</button>
+        <button onclick=fecharModal()>Não</button>
+      </div>
+    </div>
+	`
 }

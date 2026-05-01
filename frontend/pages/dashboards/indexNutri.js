@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     clientesCardsDiv.innerHTML += clientes.map(c => `
   <div class="card-cliente" id=${c.id_cliente}>
     <div class="card-content">
-    <div class="card-texto"><span>Id:</span> ${c.id_cliente}</div>
       <div class="card-texto"><span>Nome:</span> ${c.nome}</div>
       <div class="card-texto"><span>Email:</span> ${c.email}</div>
       <div class="card-botoes-container principal-botoes">
@@ -174,4 +173,29 @@ async function excluirDieta(dietaId, clienteId) {
   }
 }
 
-logouBtn.addEventListener("click", logout);
+function fecharModal() {
+	document.querySelector(".modal").classList.remove("is-active");
+	document.querySelector(".modal").innerHTML = "";
+}
+
+function abrirModal(titulo, descricao) {
+	document.querySelector(".modal").classList.add("is-active");
+	document.querySelector(".modal").innerHTML += `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button id="modalAcceptBtn">Sim</button>
+        <button onclick=fecharModal()>Não</button>
+      </div>
+    </div>
+	`
+}
+
+logouBtn.addEventListener("click", () => {
+  abrirModal("Sair", "Tem certeza que deseja sair?");
+  if (!document.getElementById("modalAcceptBtn")) return;
+  document.getElementById("modalAcceptBtn").onclick = async () => {
+    await logout();
+  }
+});

@@ -175,7 +175,7 @@ async function excluirConta() {
                 credentials: "include"
             });
             const data = await response.json();
-            if (data.erro) return;
+            if (data.erro) return console.log(reqData.erro);;
             const URI = data.sucesso.role === "nutricionista"
                 ? "http://localhost:3000/user/nutricionista"
                 : "http://localhost:3000/user/cliente";
@@ -184,7 +184,7 @@ async function excluirConta() {
                 credentials: "include"
             });
             const reqData = await req.json();
-            if (reqData.erro) return;
+            if (reqData.erro) return console.log(reqData.erro);
             window.location.href = "../home/index.html";
         }
     } catch (error) {

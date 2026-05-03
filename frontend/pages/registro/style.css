@@ -13,10 +13,52 @@
   border-radius: 4px;
 }
 
+.signup-text {
+  color: #F9F9F9;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.signup-link {
+  color: #F27121;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.signup-link:hover {
+  color: #ff8c42;
+  text-decoration: underline;
+  transform: scale(1.05);
+}
+
 .cliente, .nutricionista {
   display: none;
 }
 
 #roleForm {
   font-size: 50px;
+}
+
+#loginBtn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #F27121, #ff8c42);
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#loginBtn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
+}
+
+#loginBtn:active {
+  transform: scale(0.98);
 }

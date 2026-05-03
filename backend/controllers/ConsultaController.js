@@ -89,6 +89,13 @@ class ConsultaController {
             metodos_utilizados || null
           );
 
+          const nowDate = new Date(Date.now());
+          const consultaData = new Date(data_consulta);
+          
+          if (consultaData > nowDate) {
+            return res.status(400).json({ erro: "Data de consulta inválida" });
+          }
+
           conn.execute(
             "INSERT INTO consultas (id_cliente, id_nutricionista, data_consulta, peso_atual, altura, alergias, restricoes_alimentares, historico_familiar, observacoes, metodos_utilizados) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             consulta.toArray(),

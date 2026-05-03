@@ -27,8 +27,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     clientesCardsDiv.innerHTML += clientes.map(c => `
   <div class="card-cliente" id=${c.id_cliente}>
     <div class="card-content">
-      <div class="card-texto"><span>Nome:</span> ${c.nome}</div>
-      <div class="card-texto"><span>Email:</span> ${c.email}</div>
+      <div class="card-title">
+        <img src="../../img/gUserIcon.svg"/>
+        <div class="card-title-text">${c.nome}</div>
+      </div>
+      <hr class="card-line">
+      <div class="card-texto wIcon"><img src="../../img/sUserIcon.svg" class="icon"/><span>Nome:</span> ${c.nome}</div>
+      <div class="card-texto wIcon"><img src="../../img/emailIcon.svg" class="icon"/><span>Email:</span> ${c.email}</div>
       <div class="card-botoes-container principal-botoes">
         <div class="card-botoes" onclick="verDados(${c.id_cliente})">Ver Dados</div>
       </div>

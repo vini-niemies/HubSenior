@@ -49,7 +49,7 @@ class ClienteController {
       );
 
       if (dataCliente > dataCheck) {
-        return res.status(400).json({ erro: "Usuário deve ser maior de 18"});
+        return res.status(400).json({ erro: "Usuário deve ser maior de 18" });
       }
 
       const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -112,7 +112,38 @@ class ClienteController {
 
             const idsDietas = dietasRows.map((dieta) => dieta.id_dieta);
 
-            const excluirCliente = () => {
+            const deletarRefeicoes = () => {
+              if (idsDietas.length <= 0) {
+                return deletarDietas();
+              }
+
+              const parametros = idsDietas.map(() => "?").join(",");
+              conn.execute(
+                `DELETE FROM refeicoes WHERE id_dieta IN (${parametros})`,
+                idsDietas,
+                (refeicoesError) => {
+                  if (refeicoesError) {
+                    return conn.rollback(() => res.status(500).json({ erro: refeicoesError }));
+                  }
+                  deletarDietas();
+                }
+              );
+            };
+
+            const deletarDietas = () => {
+              conn.execute(
+                "DELETE FROM dietas WHERE id_cliente = ?",
+                [id],
+                (dietasDeleteError) => {
+                  if (dietasDeleteError) {
+                    return conn.rollback(() => res.status(500).json({ erro: dietasDeleteError }));
+                  }
+                  deletarCliente();
+                }
+              );
+            };
+
+            const deletarCliente = () => {
               conn.execute(
                 "DELETE FROM clientes WHERE id_cliente = ?",
                 [id],
@@ -129,39 +160,13 @@ class ClienteController {
                     if (commitError) {
                       return conn.rollback(() => res.status(500).json({ erro: commitError }));
                     }
-
                     return res.status(200).json({ sucesso: "Usuário deletado com sucesso" });
                   });
                 }
               );
             };
 
-            if (idsDietas.length <= 0) {
-              return excluirCliente();
-            }
-
-            const parametros = idsDietas.map(() => "?").join(",");
-            conn.execute(
-              `DELETE FROM refeicoes WHERE id_dieta IN (${parametros})`,
-              idsDietas,
-              (refeicoesError) => {
-                if (refeicoesError) {
-                  return conn.rollback(() => res.status(500).json({ erro: refeicoesError }));
-                }
-
-                conn.execute(
-                  "DELETE FROM dietas WHERE id_cliente = ?",
-                  [id],
-                  (dietasDeleteError) => {
-                    if (dietasDeleteError) {
-                      return conn.rollback(() => res.status(500).json({ erro: dietasDeleteError }));
-                    }
-
-                    excluirCliente();
-                  }
-                );
-              }
-            );
+            deletarRefeicoes();
           }
         );
       });

@@ -114,6 +114,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid white;
   color: white;
+  background-color: rgba(255, 255, 255, 0.08);
   transition: transform 0.25s ease-out;
 }
 
@@ -199,6 +200,70 @@
   margin-bottom: 0.75rem;
 }
 
+.forms-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.forms-wrapper .login-box {
+  width: min(720px, 92vw);
+  text-align: left;
+}
+
+.forms-wrapper form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+}
+
+.forms-wrapper form button {
+  align-self: center;
+  max-width: 200px;
+  min-width: 200px;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.forms-wrapper form #loginBtn {
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(242, 113, 33, 0.25);
+}
+
+.forms-wrapper form #loginBtn:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(242, 113, 33, 0.35);
+}
+
+.forms-wrapper form .ancoraBtn,
+.forms-wrapper form #excluirContaBtnCliente {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.forms-wrapper form .ancoraBtn:hover,
+.forms-wrapper form #excluirContaBtnCliente:hover {
+  transform: translateY(-1px) scale(1.01);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.forms-wrapper form #excluirContaBtnCliente {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.forms-wrapper form #excluirContaBtnCliente:hover {
+  background: rgba(220, 38, 38, 0.28);
+}
+
 .subtitle {
   font-size: 24px;
 }
@@ -212,8 +277,40 @@
 }
 
 .container>.login-box::-webkit-scrollbar-thumb {
-  background: rgba(242, 113, 33, 0.6);
+  background: #f2712199;
   border-radius: 20px;
+}
+
+.icon {
+  width: 20px;
+  fill: white;
+}
+
+.card-title {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title img {
+  width: 50px;
+}
+
+.card-title-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.wIcon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-line {
+  margin: 5px 0 10px 0;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 @media screen and (max-width: 576px) {

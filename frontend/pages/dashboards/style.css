@@ -1,7 +1,7 @@
 .login-box {
   width: 90%;
   min-height: 90%;
-  max-height: 90%;
+  max-height: 95%;
   overflow-y: scroll;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -11,7 +11,8 @@
   transform: translateY(0);
 }
 
-.title-nutri {
+.title-nutri,
+.messageField {
   text-align: left;
   padding: 1em 0;
   margin: 0 16px;
@@ -52,7 +53,7 @@
 
 .title-line {
   width: 100%;
-  margin: 10px 0;
+  margin: 0 0 10px 0;
 }
 
 
@@ -272,13 +273,23 @@
   grid-template-columns: 1fr;
 }
 
-.container>.login-box::-webkit-scrollbar {
+.login-box::-webkit-scrollbar {
   width: 8px;
 }
 
-.container>.login-box::-webkit-scrollbar-thumb {
-  background: #f2712199;
+.login-box::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff8c42, #f27121);
   border-radius: 20px;
+}
+
+.login-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+.login-box {
+  scrollbar-color: #f27121 rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin;
 }
 
 .icon {
@@ -313,13 +324,178 @@
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-@media screen and (max-width: 576px) {
+.top {
+  display: flex;
+  align-items: center;
+}
+
+.top>h1 {
+  flex: 1;
+  text-align: center;
+}
+
+.user-info {
+  width: 30%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex: 0 0 auto;
+
+}
+
+.top-buttons {
+  min-width: 30%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+.top-buttons button {
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.top-buttons button:active {
+  transform: translateY(0);
+}
+
+.codigo {
+  font-weight: 100;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+.codigo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.top-buttons img {
+  width: 20px;
+}
+
+#logoutBtn {
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  font-weight: 600;
+  border: none;
+  color: white;
+}
+
+#logoutBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(242, 113, 33, 0.3);
+}
+
+.user-info img {
+  width: 50px;
+}
+
+.title-nutri,
+.messageField {
+  font-weight: bold;
+}
+
+.title-nutri>p,
+.messageField>p {
+  font-size: 12px;
+  font-weight: 200;
+  color: rgb(199, 199, 199);
+}
+
+@media screen and (max-width: 768px) {
+  .login-box {
+    width: 96%;
+    min-height: auto;
+    max-height: none;
+  }
+
+  .top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .top>h1 {
+    flex: 0 0 auto;
+    width: 100%;
+    order: 2;
+  }
+
+  .top-buttons {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .top-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .codigo,
+  #logoutBtn {
+    flex: 1 1 180px;
+  }
+
+  .title-nutri,
+  .messageField {
+    margin: 0 12px;
+    padding: 0.5rem 0;
+    text-align: center;
+  }
+
+  .title-clientes,
+  .messageField,
+  .cards-div-message {
+    text-align: center;
+  }
+
   .title-top-hud {
-    gap: 1em;
+    margin: 0;
+    gap: 1rem;
     flex-direction: column;
     justify-content: flex-start;
   }
 
+  .clientes-card-container {
+    gap: 1rem;
+  }
+
+  .card-cliente {
+    width: 100%;
+    max-width: none;
+    flex: 1 1 100%;
+  }
+
+  .forms-wrapper .login-box {
+    width: 96vw;
+  }
+
+  .forms-wrapper form button {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .messageField {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 576px) {
   .messageField {
     font-size: 16px;
   }

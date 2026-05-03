@@ -1,6 +1,6 @@
 const listaDietasCliente = document.getElementById("listaDietasCliente");
 const messageCliente = document.getElementById("messageCliente");
-const logouBtn = document.getElementById("logouBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 function formatarData(data) {
 	if (!data) return "Nao definida";
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const dataCliente = await responseCliente.json();
 
 		if (dataCliente?.sucesso?.nome) {
-			messageCliente.innerHTML = `Olá ${dataCliente.sucesso.nome}. <a href="./conta.html" class="ancora">Editar Dados</a>`;
+			messageCliente.innerHTML = `Olá, ${dataCliente.sucesso.nome}<p>Bem-Vindo de volta!</p>`;
 		}
 
 		const dataDietas = await carregarDietasCliente();
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 });
 
-logouBtn.addEventListener("click", () => {
+logoutBtn.addEventListener("click", () => {
 	abrirModal("Sair", "Tem certeza que deseja sair?");
 	if (!document.getElementById("modalAcceptBtn")) return;
 	document.getElementById("modalAcceptBtn").onclick = async () => {

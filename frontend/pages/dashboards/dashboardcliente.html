@@ -19,13 +19,25 @@
   <main class="container">
     <div class="login-box">
 
-      <h1 class="logo title-top">HubSenior <button id="logouBtn">Logout</button></h1>
+      <div class="top">
+        <div class="user-info">
+          <img src="../../img/xUserIcon.svg" class="icon" />
+          <div class="title-nutri" id="messageCliente"></div>
+          <a href="../dashboards/conta.html"><img src="../../img/editIcon.svg"/></a>
+        </div>
+        <h1 class="logo title-top">HubSenior</h1>
+        <div class="top-buttons">
+          <button class="codigo" id="copiarbtn"><img src="../../img/copyIcon.svg">Copiar código de nutricionista</button>
+          <button id="logoutBtn">Logout</button>
+        </div>
+      </div>
       <hr class="title-line">
-      <p class="subtitle">Minhas Dietas</p>
-      <div class="messageField" id="messageCliente"></div>
-      <div id="listaDietasCliente" class="lista-dietas"></div>
+      <div>
 
-    </div>
+        <p class="subtitle">Minhas Dietas</p>
+        <div id="listaDietasCliente" class="lista-dietas"></div>
+
+      </div>
   </main>
 
   <script src="../../functions/controlarSessao.js"></script>

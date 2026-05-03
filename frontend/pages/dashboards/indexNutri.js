@@ -1,15 +1,13 @@
 const clientesCardsDiv = document.querySelector(".clientes-card-container");
-const nutriCodigo = document.querySelector(".codigo");
 const copiarCodigoBtn = document.getElementById("copiarbtn");
 const olaNutri = document.querySelector(".title-nutri");
-const logouBtn = document.getElementById("logouBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 document.addEventListener("DOMContentLoaded", async () => {
   const responseNutri = await fetch("http://localhost:3000/user/nutricionista");
   const dataNutri = await responseNutri.json();
   if (dataNutri.erro) return clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus dados</p>`;
-  olaNutri.textContent = `Olá ${dataNutri.sucesso.nome}.`;
-  olaNutri.innerHTML += ` <a href="./conta.html" class="ancora">Editar Dados</a>`
+  olaNutri.innerHTML = `Olá, ${dataNutri.sucesso.nome}<p>Bem-Vindo de volta!</p>`;
   if (copiarCodigoBtn) {
     copiarCodigoBtn.addEventListener("click", async () => {
       await copiar(dataNutri.sucesso.codigo);
@@ -197,7 +195,7 @@ function abrirModal(titulo, descricao) {
 	`
 }
 
-logouBtn.addEventListener("click", () => {
+logoutBtn.addEventListener("click", () => {
   abrirModal("Sair", "Tem certeza que deseja sair?");
   if (!document.getElementById("modalAcceptBtn")) return;
   document.getElementById("modalAcceptBtn").onclick = async () => {

@@ -82,6 +82,18 @@ class ClienteController {
         return res.status(400).json({ erro: "Todos os campos devem estar preenchidos" });
       }
 
+      const dataCliente = new Date(data_nascimento);
+      const dataAtual = new Date();
+      const dataCheck = new Date(
+        dataAtual.getFullYear() - 18,
+        dataAtual.getMonth(),
+        dataAtual.getDate()
+      );
+
+      if (dataCliente > dataCheck) {
+        return res.status(400).json({ erro: "Usuário deve ser maior de 18" });
+      }
+
       conn.execute(
         "UPDATE clientes SET nome = ?, email = ?, data_nascimento = ?, endereco = ?, objetivo = ? WHERE id_cliente = ?",
         [nome, email, data_nascimento, endereco, objetivo, id],

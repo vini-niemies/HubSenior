@@ -78,6 +78,18 @@ CREATE TABLE refeicoes (
     FOREIGN KEY (id_dieta) REFERENCES dietas(id_dieta) ON DELETE CASCADE
 );
 
+CREATE TABLE personais (
+    id_personal INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cref VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20),
+    instagram VARCHAR(20),
+    endereco VARCHAR(100),
+    codigo VARCHAR(255) UNIQUE NOT NULL
+);
+
 SELECT * FROM clientes;
 SELECT * FROM refeicoes;
 SELECT * FROM dietas;

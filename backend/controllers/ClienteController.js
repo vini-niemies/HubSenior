@@ -28,7 +28,7 @@ class ClienteController {
         return res.status(400).json({ erro: "O código de nutricionista é necessário para criar a conta" });
       }
 
-      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas");
+      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas UNION SELECT email from personais");
       if (rows && rows.length > 0) {
         const emailsCadastrados = rows.map(e => e.email);
         if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });

@@ -30,7 +30,7 @@ class NutricionistaController {
         return res.status(400).json({ erro: "E-mail inválido" });
       }
 
-      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas");
+      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas UNION SELECT email from");
       if (rows && rows.length > 0) {
         const emailsCadastrados = rows.map(e => e.email);
         if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });

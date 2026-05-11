@@ -65,6 +65,55 @@ async function criarNutricionista(e) {
   if (data.sucesso) return window.location.href = "../login/index.html";
 }
 
+async function criarPersonal(e) {
+  e.preventDefault();
+  try {
+    const nome = document.getElementById("persoNome").value;
+    const cref = document.getElementById("persoCref").value;
+    const email = document.getElementById("persoEmail").value;
+    const senha = document.getElementById("persoSenha").value;
+    const telefone = document.getElementById("persoTelefone").value;
+    const instagram = document.getElementById("persoInstagram").value;
+    const endereco = document.getElementById("persoEndereco").value;
+
+    const user = {
+      nome,
+      cref,
+      email,
+      senha,
+      telefone,
+      instagram,
+      endereco
+    }
+
+    const response = await fetch("http://localhost:3000/user/personal", {
+      method: "POST",
+      body: JSON.stringify(user),
+      headers: {
+        "Content-type": "application/json"
+      }
+    });
+    const data = await response.json();
+    if (data.erro) {
+      console.log(data.erro);
+       mensagemErroCampo.textContent = data.erro;
+       return;
+    }
+    if (data.sucesso) {
+      mensagemErroCampo.textContent = ""
+      window.location.href = "../login/index.html";
+      return;
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const registrarPersonalForm = document.getElementById("formPerso");
+if (registrarPersonalForm) {
+  registrarPersonalForm.addEventListener("submit", criarPersonal);
+}
+
 const registrarClienteForm = document.getElementById("formCliente");
 if (registrarClienteForm) {
   registrarClienteForm.addEventListener("submit", criarCliente);

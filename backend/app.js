@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Cliente from "./models/Cliente.js";
 import Nutricionista from "./models/Nutricionista.js";
+import Personal from "./models/Personal.js";
 import Dieta from "./models/Dieta.js";
 import ResultadoExames from "./models/resultado_exames.js";
 import cookieParser from "cookie-parser";
@@ -63,6 +64,22 @@ app.post("/nutricionista", async (req, res) => {
     res.status(500).json({ erro: error });
   }
 
+});
+
+app.post("/personal", async (req, res) => {
+  try {
+    const { nome, cref, email, telefone, instagram, endereco } = req.body;
+    const senha = await bcrypt.hash(req.body.senha, salt);
+    if (!nome || !cref || !email || !telefone || !senha) return res.status(400).json({ erro: "Todos os dados devem ser preenchidos" });
+    const codigo = await bcrypt.hash(nome + email, salt);
+    const personal = new Personal(nome, cref, email, senha, telefone, codigo, instagram, endereco);
+    conn.execute("INSERT INTO personais (nome, cref, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", personal.toArray(), (error, results) => {
+      if (error) return res.status(500).json({ erro: error });
+      res.status(201).json({ sucesso: "Usuario Criado" });
+    });
+  } catch (error) {
+    res.status(500).json({ erro: error });
+  }
 });
 
 app.get("/nutri/clientes", verificaToken, async (req, res) => {
@@ -128,7 +145,7 @@ app.post("/auth/login", (req, res) => {
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
       });
-    } else if (role === "nutri") {
+     } else if (role === "nutri") {
       conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
         if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
         const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
@@ -153,8 +170,27 @@ app.post("/auth/login", (req, res) => {
         });
         return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
       });
-    }
-  } catch (error) {
+      } else if (role === "personal") {
+        conn.execute("SELECT id_personal, email, senha FROM personais WHERE email = ?", [email], async (error, rows) => {
+          if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
+          const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
+          if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
+          const accessToken = jwt.sign(
+            { id: rows[0].id_personal, email: rows[0].email, role: "personal" },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRATION || "5m" }
+          );
+          const refreshToken = jwt.sign(
+            { id: rows[0].id_personal, email: rows[0].email, role: "personal" },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
+          );
+          res.cookie("refreshToken", refreshToken, { ...cookieConfig, maxAge: 1000 * 60 * 60 * 24 * 7 });
+          res.cookie("accessToken", accessToken, { ...cookieConfig, maxAge: 1000 * 60 * 5 });
+          return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
+        });
+      }
+   } catch (error) {
     res.status(500).json({ erro: error });
   }
 });

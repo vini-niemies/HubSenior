@@ -1,4 +1,3 @@
-
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +15,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('./img/pexels-yankrukov-6815699.jpg') no-repeat center center/cover;
+  background: url('../img/pexels-yankrukov-6815699.jpg') no-repeat center center/cover;
   z-index: -2;
 }
 
@@ -36,14 +35,14 @@ html, body {
   align-items: center;
 }
 
-/* CARD LOGIN */
+/* Basic card container used across pages */
 .login-box {
-  background: rgba(255, 255, 255, 0.1);
+  background: #0f172a4d;
   padding: 40px;
   width: 340px;
   border-radius: 16px;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(0, 14, 58, 0.2);
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   text-align: center;
   transition: 0.3s;
@@ -53,7 +52,7 @@ html, body {
   transform: translateY(-5px);
 }
 
-/* LOGO */
+/* Logo and subtitle (shared) */
 .logo {
   color: #F27121;
   font-size: 32px;
@@ -62,20 +61,18 @@ html, body {
   letter-spacing: 1px;
 }
 
-/* SUB */
 .subtitle {
   color: #F9F9F9;
   font-size: 14px;
   margin-bottom: 25px;
 }
 
-/* INPUTS */
+/* Inputs base styles */
 .input-box {
   position: relative;
   margin-bottom: 25px;
 }
 
-/* INPUT NORMAL */
 .input-box input {
   width: 100%;
   padding: 10px 5px;
@@ -88,7 +85,6 @@ html, body {
   transition: 0.3s;
 }
 
-/* SELECT MELHORADO */
 .input-box select {
   width: 100%;
   padding: 1.1rem 30px 0.5rem 5px;
@@ -118,7 +114,6 @@ html, body {
   pointer-events: none;
 }
 
-/* foco p ficar bonito */
 .input-box input:focus,
 .input-box select:focus {
   border-bottom: 2px solid #F27121;
@@ -158,59 +153,11 @@ html, body {
   color: #F27121;
 }
 
-/* caso tire a foto de fundo só pra n ficar tudo branco */
 select option {
   background: #1A2B4C;
   color: #fff;
 }
 
-/* botão de login laranja e elementos específicos do formulário de login */
-#loginBtn {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #F27121, #ff8c42);
-  border: none;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-  margin-top: 10px;
-}
-#loginBtn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
-}
-#loginBtn:active {
-  transform: scale(0.98);
-}
-
-.ancoraBtn {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #F27121, #ff8c42);
-  border: none;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.ancoraBtn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
-}
-
-.ancoraBtn:active {
-  transform: scale(0.98);
-}
-
-/* botão olho para mostrar senha (login) */
 .senha-box button {
   position: absolute;
   right: 0;
@@ -225,24 +172,4 @@ select option {
 .senha-box button:hover {
   color: #F27121;
   transform: scale(1.2);
-}
-
-/* texto/link criar conta (login) */
-.signup-text {
-  color: #F9F9F9;
-  font-size: 14px;
-  margin-top: 15px;
-}
-
-.signup-link {
-  color: #F27121;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.signup-link:hover {
-  color: #ff8c42;
-  text-decoration: underline;
-  transform: scale(1.05);
 }

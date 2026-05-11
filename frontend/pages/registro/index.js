@@ -1,3 +1,5 @@
+const mensagemErroCampo = document.querySelector(".messageField");
+
 async function criarCliente(e) {
   e.preventDefault();
   const codigo = document.getElementById("clienteCodigo").value;
@@ -7,6 +9,7 @@ async function criarCliente(e) {
   const dataNasc = document.getElementById("clienteDataNascimento").value;
   const objetivo = document.getElementById("clienteObjetivo").value;
   const endereco = document.getElementById("clienteEndereco").value;
+
   const user = {
     codigo,
     nome,
@@ -16,7 +19,7 @@ async function criarCliente(e) {
     objetivo,
     endereco
   }
-  const response = await fetch("http://localhost:3000/cliente", {
+  const response = await fetch("http://localhost:3000/user/cliente", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -24,9 +27,13 @@ async function criarCliente(e) {
     }
   });
   const data = await response.json();
-  if (data.erro) return console.log(data.erro);
-  if (data.sucesso) return window.location.href = "../login/index.html";
-} 
+  if (data.erro) return mensagemErroCampo.textContent = data.erro;
+  if (data.sucesso) {
+    mensagemErroCampo.textContent = ""
+    window.location.href = "../login/index.html";
+    return;
+  };
+}
 
 async function criarNutricionista(e) {
   e.preventDefault();
@@ -46,7 +53,7 @@ async function criarNutricionista(e) {
     instagram,
     endereco
   };
-  const response = await fetch("http://localhost:3000/nutricionista", {
+  const response = await fetch("http://localhost:3000/user/nutricionista", {
     method: "POST",
     body: JSON.stringify(user),
     headers: {
@@ -54,7 +61,7 @@ async function criarNutricionista(e) {
     }
   });
   const data = await response.json();
-  if (data.erro) return console.log(data.erro);
+  if (data.erro) return mensagemErroCampo.textContent = data.erro;
   if (data.sucesso) return window.location.href = "../login/index.html";
 }
 

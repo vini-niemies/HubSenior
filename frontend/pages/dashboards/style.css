@@ -1,0 +1,502 @@
+.login-box {
+  width: 90%;
+  min-height: 90%;
+  max-height: 95%;
+  overflow-y: scroll;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.login-box:hover {
+  transform: translateY(0);
+}
+
+.title-nutri,
+.messageField {
+  text-align: left;
+  padding: 1em 0;
+  margin: 0 16px;
+  color: white;
+  font-size: 24px;
+}
+
+.title-top {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  max-width: 90%;
+  flex-wrap: wrap;
+}
+
+.title-top button {
+  width: fit-content;
+  padding: 0.75rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.title-top button:hover {
+  background: #e55a00;
+}
+
+.title-clientes {
+  font-size: 24px;
+  color: white;
+}
+
+.title-line {
+  width: 100%;
+  margin: 0 0 10px 0;
+}
+
+
+.cards-div-message {
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  align-self: center;
+  padding: 0 0 1em 0;
+}
+
+.title-top-hud {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1em;
+  align-items: center;
+}
+
+.title-codigo {
+  font-size: 24px;
+  color: white;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.copiar-codigo {
+  color: white;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  transition: transform 0.25s ease-out;
+}
+
+.copiar-codigo:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.clientes-card-container {
+  width: 100%;
+  margin-top: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.5em;
+  justify-content: center;
+}
+
+.card-cliente {
+  width: 90%;
+  max-width: 300px;
+  min-height: 170px;
+  flex: 1 1 250px;
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+  border: 1px solid white;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+  transition: transform 0.25s ease-out;
+}
+
+.card-cliente:hover {
+  transform: scale(1.02);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 1em;
+}
+
+.card-texto {
+  text-align: left;
+}
+
+.card-texto span {
+  font-weight: bold;
+  color: #ff6600;
+}
+
+.card-botoes-container {
+  margin-top: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1em;
+}
+
+.card-info {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card-botoes {
+  padding: 0.5em;
+  background-color: #e55a00;
+  border-radius: 4px;
+  transition: transform 0.25s ease-out;
+  text-decoration: none;
+  color: white;
+  margin-top: 10px;
+}
+
+.card-botoes:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.ancora {
+  text-decoration: none;
+  color: #e55a00;
+}
+
+.lista-dietas {
+  width: 100%;
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  justify-items: center;
+  gap: 1rem;
+}
+
+.lista-dietas .card-dieta {
+  margin: 10px auto;
+}
+
+.card-info-visible {
+  display: flex;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.messageField {
+  text-align: left;
+  color: #fff;
+  font-size: 28px;
+  margin-bottom: 0.75rem;
+}
+
+.forms-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.forms-wrapper .login-box {
+  width: min(720px, 92vw);
+  text-align: left;
+}
+
+.forms-wrapper form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+}
+
+.forms-wrapper form button {
+  align-self: center;
+  max-width: 200px;
+  min-width: 200px;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.forms-wrapper form #loginBtn {
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(242, 113, 33, 0.25);
+}
+
+.forms-wrapper form #loginBtn:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(242, 113, 33, 0.35);
+}
+
+.forms-wrapper form .ancoraBtn,
+.forms-wrapper form #excluirContaBtnCliente {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.forms-wrapper form .ancoraBtn:hover,
+.forms-wrapper form #excluirContaBtnCliente:hover {
+  transform: translateY(-1px) scale(1.01);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.forms-wrapper form #excluirContaBtnCliente {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.forms-wrapper form #excluirContaBtnCliente:hover {
+  background: rgba(220, 38, 38, 0.28);
+}
+
+.subtitle {
+  font-size: 24px;
+}
+
+.lista-dietas {
+  grid-template-columns: 1fr;
+}
+
+.login-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.login-box::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff8c42, #f27121);
+  border-radius: 20px;
+}
+
+.login-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+}
+
+.login-box {
+  scrollbar-color: #f27121 rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin;
+}
+
+.icon {
+  width: 20px;
+  fill: white;
+}
+
+.card-title {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title img {
+  width: 50px;
+}
+
+.card-title-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.wIcon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-line {
+  margin: 5px 0 10px 0;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+}
+
+.top>h1 {
+  flex: 1;
+  text-align: center;
+}
+
+.user-info {
+  width: 30%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex: 0 0 auto;
+
+}
+
+.top-buttons {
+  min-width: 30%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+.top-buttons button {
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.top-buttons button:active {
+  transform: translateY(0);
+}
+
+.codigo {
+  font-weight: 100;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+.codigo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.top-buttons img {
+  width: 20px;
+}
+
+#logoutBtn {
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  font-weight: 600;
+  border: none;
+  color: white;
+}
+
+#logoutBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(242, 113, 33, 0.3);
+}
+
+.user-info img {
+  width: 50px;
+}
+
+.title-nutri,
+.messageField {
+  font-weight: bold;
+}
+
+.title-nutri>p,
+.messageField>p {
+  font-size: 12px;
+  font-weight: 200;
+  color: rgb(199, 199, 199);
+}
+
+@media screen and (max-width: 768px) {
+  .login-box {
+    width: 96%;
+    min-height: auto;
+    max-height: none;
+  }
+
+  .top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .top>h1 {
+    flex: 0 0 auto;
+    width: 100%;
+    order: 2;
+  }
+
+  .top-buttons {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .top-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .codigo,
+  #logoutBtn {
+    flex: 1 1 180px;
+  }
+
+  .title-nutri,
+  .messageField {
+    margin: 0 12px;
+    padding: 0.5rem 0;
+    text-align: center;
+  }
+
+  .title-clientes,
+  .messageField,
+  .cards-div-message {
+    text-align: center;
+  }
+
+  .title-top-hud {
+    margin: 0;
+    gap: 1rem;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .clientes-card-container {
+    gap: 1rem;
+  }
+
+  .card-cliente {
+    width: 100%;
+    max-width: none;
+    flex: 1 1 100%;
+  }
+
+  .forms-wrapper .login-box {
+    width: 96vw;
+  }
+
+  .forms-wrapper form button {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .messageField {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .messageField {
+    font-size: 16px;
+  }
+}

@@ -1,74 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HubSenior</title>
-  <link rel="stylesheet" href="../login/style.css">
+  <title>HubSenior | Cliente</title>
+  <link rel="stylesheet" href="../../styles/base.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="../../styles/modal.css">
 </head>
+
 <body>
+  <div id="modal" class="modal">
+  </div>
 
   <div class="background"></div>
 
   <main class="container">
     <div class="login-box">
 
-      <h1 class="logo">HubSenior</h1>
-      <p class="subtitle">Área do Cliente</p>
-
-      <form id="formCliente">
-
-        <div class="input-box">
-          <input type="text" id="nome" required>
-          <label>Nome Completo</label>
+      <div class="top">
+        <div class="user-info">
+          <img src="../../img/xUserIcon.svg" class="icon" />
+          <div class="title-nutri" id="messageCliente"></div>
+          <a href="../dashboards/conta.html"><img src="../../img/editIcon.svg"/></a>
         </div>
-
-        <div class="input-box">
-          <input type="email" id="email" required>
-          <label>E-mail</label>
+        <h1 class="logo title-top">HubSenior</h1>
+        <div class="top-buttons">
+          <button id="logoutBtn">Logout</button>
         </div>
+      </div>
+      <hr class="title-line">
+      <div>
 
-        <div class="input-box">
-          <input type="password" id="senha" required>
-          <label>Senha</label>
-        </div>
+        <p class="subtitle">Minhas Dietas</p>
+        <div id="listaDietasCliente" class="lista-dietas"></div>
 
-        <div class="input-box">
-          <input id="dataNascimento" required>
-          <label>Data de Nascimento</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="endereco" required>
-          <label>Endereço</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="objetivo" required>
-          <label>Objetivo</label>
-        </div>
-
-        <div class="input-box">
-          <input type="number" id="peso" required>
-          <label>Peso (kg)</label>
-        </div>
-
-        <div class="input-box">
-          <input type="number" id="altura" required>
-          <label>Altura (cm)</label>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="alergias">
-          <label>Alergias / Restrições</label>
-        </div>
-
-        <button id="loginBtn" type="submit">Salvar Dados</button>
-      </form>
-
-    </div>
+      </div>
   </main>
 
-  <script src="./index.js"></script>
+  <script src="../../functions/controlarSessao.js"></script>
+  <script src="./indexCliente.js"></script>
 </body>
+
 </html>

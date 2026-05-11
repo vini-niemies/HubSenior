@@ -2,11 +2,7 @@ const messageField = document.querySelector(".messageField");
 const emailInput = document.getElementById("email");
 const senhaInput = document.getElementById("senha");
 const roleSelect = document.getElementById("role");
-
-const senhaToggle = document.getElementById("toggleSenha");
-senhaToggle.addEventListener("click", () => {
-  senhaInput.setAttribute("type", senhaInput.getAttribute("type") === "password" ? "text" : "password");
-})
+const togglePasswordBtn = document.querySelector(".toggle-password");
 
 async function login(e) {
   e.preventDefault();
@@ -26,11 +22,24 @@ async function login(e) {
     });
     const response = await req.json();
     if (response.erro) return messageField.textContent = response.erro;
-    alert(response.sucesso);
+    if (response.sucesso) {
+      if (user.role === "nutri") {
+        window.location.href = "../dashboards/dashboardnutricionista.html";
+      } else if (user.role === "cliente") {
+        window.location.href = "../dashboards/dashboardcliente.html"
+      }
+    }
   } catch (error) {
     messageField.textContent = "Erro ao tentar realizar login";
   }
 }
 
+function togglePassword() {
+  const type = senhaInput.getAttribute("type") === "password" ? "text" : "password";
+  senhaInput.setAttribute("type", type);
+  togglePasswordBtn.textContent = type === "password" ? "👁️" : "Ocultar";
+}
+
 const loginBtn = document.getElementById("loginBtn");
 loginBtn.addEventListener("click", login);
+togglePasswordBtn.addEventListener("click", togglePassword);

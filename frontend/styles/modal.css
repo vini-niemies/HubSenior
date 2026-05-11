@@ -1,0 +1,77 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 9999;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.modal.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body.modal-active {
+  overflow: hidden;
+}
+
+.modal-content {
+  width: min(92%, 460px);
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
+.modal-content h2 {
+  margin-bottom: 0.5rem;
+  color: #ff6600;
+  font-size: 1.5rem;
+}
+
+.modal-content p {
+  color: #f4f4f4;
+  line-height: 1.4;
+}
+
+.modal-content > div {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.modal-content button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(242, 113, 33, 0.6);
+}
+
+.modal-content button:active {
+  transform: scale(0.98);
+}

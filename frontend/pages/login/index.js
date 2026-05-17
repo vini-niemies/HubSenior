@@ -26,7 +26,9 @@ async function login(e) {
       if (user.role === "nutri") {
         window.location.href = "../dashboards/dashboardnutricionista.html";
       } else if (user.role === "cliente") {
-        window.location.href = "../dashboards/dashboardcliente.html"
+        window.location.href = "../dashboards/dashboardcliente.html";
+      } else if (user.role === "personal") {
+        window.location.href = "../dashboards/dashboardpersonal.html";
       }
     }
   } catch (error) {

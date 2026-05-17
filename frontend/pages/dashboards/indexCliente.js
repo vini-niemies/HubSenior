@@ -1,6 +1,6 @@
-const listaDietasCliente = document.getElementById("listaDietasCliente");
 const messageCliente = document.getElementById("messageCliente");
 const logoutBtn = document.getElementById("logoutBtn");
+const associarForm = document.getElementById("associarCodigo");
 
 function formatarData(data) {
 	if (!data) return "Nao definida";
@@ -40,35 +40,60 @@ async function logout() {
 }
 
 function renderizarDietas(dietas) {
-	if (!dietas || dietas.length === 0) {
-		return listaDietasCliente.innerHTML = '<p class="cards-div-message">Nenhuma dieta encontrada.</p>';
+	if (!dietas) {
+		return;
 	}
-
-	listaDietasCliente.innerHTML = dietas.map((dieta) => {
-		const refeicoes = dieta.refeicoes && dieta.refeicoes.length > 0
-			? dieta.refeicoes.map((refeicao) => `
-					<div class="card-texto">
-						<span>${refeicao.nome_refeicao}:</span> ${formatarHorario(refeicao.horario)}
-					</div>
-				`).join("")
-			: '<div class="card-texto">Nenhuma refeicao cadastrada.</div>';
-
-		return `
-			<div class="card-cliente card-dieta" data-dieta="${dieta.id_dieta}">
-				<div class="card-content">
-					<div class="card-texto"><span>Titulo:</span> ${dieta.titulo_dieta}</div>
-					<div class="card-texto"><span>Inicio:</span> ${formatarData(dieta.data_inicio)}</div>
-					<div class="card-texto"><span>Fim:</span> ${formatarData(dieta.data_fim)}</div>
-					<div class="card-texto"><span>Objetivos:</span> ${dieta.objetivos || "Nao informado"}</div>
-					<div class="card-info card-info-visible">
-						<div class="card-texto"><span>Refeicoes:</span></div>
-						${refeicoes}
-					</div>
-				</div>
-			</div>
-		`;
-	}).join("");
+	const listaDietas = document.querySelector(".dieta-container-list");
+	listaDietas.innerHTML = "";
+	if (dietas.length < 1) {
+		const li = document.createElement("li");
+		li.className = "dieta-item";
+		li.innerHTML = `
+			<div class="dieta-item-header">
+                <div class="dieta-item-text dieta-item-title">Sem dietas <i class="fa-solid fa-face-sad-cry" style="color: rgba(242,113,33,0.8);"></i></div>
+            </div>
+		`
+		listaDietas.appendChild(li);
+	}
+	
+	dietas.forEach(d => {
+		const li = document.createElement("li");
+		li.className = "dieta-item";
+		li.innerHTML = `
+            <div class="dieta-item-header">
+                <div class="dieta-item-text dieta-item-title">${d.titulo_dieta}</div>
+                <button class="btn-interact"><i class="fa-solid fa-caret-right" style="color: rgb(255, 255, 255);"></i></button>
+            </div>
+            <div class="dieta-item-mais">
+                <div class="dieta-item-text">Início: ${formatarData(d.data_inicio)}</div>
+                <div class="dieta-item-text">Fim: ${formatarData(d.data_fim)}</div>
+                ${d.refeicoes.map(r => `
+                <div class="dieta-item-dieta">
+                    <div class="dieta-item-dieta-title">${r.nome_refeicao}</div>
+                    <div class="dieta-item-dieta-hour">Horário: ${formatarHorario(r.horario)}</div>
+                </div>`).join("")}
+                <div class="dieta-item-subtext">Objetivo: ${d.objetivos}</div>
+            </div>
+        `;
+		listaDietas.appendChild(li);
+	});
 }
+
+document.querySelector(".dieta-container-list").addEventListener("click", (e) => {
+	const btn = e.target.closest(".btn-interact");
+	if (!btn) return;
+
+	const item = btn.closest(".dieta-item");
+	const mais = item.querySelector(".dieta-item-mais");
+	const icon = btn.querySelector("i");
+
+	mais.classList.toggle("active");
+	if (mais.classList.contains("active")) {
+		icon.classList.replace("fa-caret-right", "fa-caret-down");
+	} else {
+		icon.classList.replace("fa-caret-down", "fa-caret-right");
+	}
+});
 
 async function carregarDietasCliente() {
 	const response = await fetch("http://localhost:3000/dieta", {
@@ -76,6 +101,40 @@ async function carregarDietasCliente() {
 		credentials: "include"
 	});
 	return await response.json();
+}
+
+function renderizarAssociados(associados) {
+	if (!associados) return;
+	const usersList = document.querySelector(".usuarios-list");
+	usersList.innerHTML = "";
+
+	if (associados.length < 1) {
+		const li = document.createElement("li");
+		li.classList.add("usuario-item");
+		li.innerHTML = "Sem usuários associados";
+		usersList.appendChild(li);
+		return;
+	}
+	const associadosChaves = Object.keys(associados);
+	associadosChaves.forEach(a => {
+		if (associados[a] === null) return;
+		const li = document.createElement("li");
+		li.classList.add("usuario-item");
+		if (a.includes("nutricionista")) {
+			li.innerHTML = `<span class="usuario-name"><i class="fa-solid fa-user" style="color: #f27121;"></i>Nutricionista ${associados[a]}</span>`;
+		} else if (a.includes("personal")) {
+			li.innerHTML = `<span class="usuario-name"><i class="fa-solid fa-user" style="color: #f27121;"></i>Personal ${associados[a]}</span>`;
+		}
+		usersList.appendChild(li);
+	});
+}
+
+async function carregarAssociadosCliente() {
+	const response = await fetch("http://localhost:3000/user/cliente/associados", {
+		method: "GET",
+		credentials: "include"
+	});
+	return await response.json(); 
 }
 
 function fecharModal() {
@@ -109,15 +168,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 			messageCliente.innerHTML = `Olá, ${dataCliente.sucesso.nome}<p>Bem-Vindo de volta!</p>`;
 		}
 
-		const dataDietas = await carregarDietasCliente();
-		if (dataDietas.erro) {
-			listaDietasCliente.innerHTML = '<p class="cards-div-message">Erro ao carregar dietas.</p>';
-			return;
-		}
-
-		renderizarDietas(dataDietas.sucesso || []);
+		const dietas = await carregarDietasCliente();
+		renderizarDietas(dietas.sucesso);
+		const associados = await carregarAssociadosCliente();
+		renderizarAssociados(associados.sucesso);
 	} catch (error) {
-		listaDietasCliente.innerHTML = '<p class="cards-div-message">Erro ao carregar dietas.</p>';
+		return;
 	}
 });
 
@@ -126,5 +182,46 @@ logoutBtn.addEventListener("click", () => {
 	if (!document.getElementById("modalAcceptBtn")) return;
 	document.getElementById("modalAcceptBtn").onclick = async () => {
 		await logout();
+	}
+});
+
+associarForm.addEventListener("submit", async (e) => {
+	e.preventDefault();
+	const inputCodigo = document.getElementById("inputCodigo");
+	const reqBody = {
+		codigo: inputCodigo.value
+	};
+	const req = await fetch("http://localhost:3000/user/cliente/codigo", {
+		method: "POST",
+		body: JSON.stringify(reqBody),
+		headers: {
+			"Content-type": "application/json"
+		},
+		credentials: "include"
+	});
+	const data = await req.json();
+	if (data.erro) {
+		abrirModal("Erro", data.erro);
+		if (document.querySelector(".modal-content")) {
+			document.querySelector(".modal-content").innerHTML = `
+			<h2>Erro</h2>
+			<p>${data.erro}</p>
+			<div>
+				<button onclick=fecharModal()>Fechar</button>
+			</div>
+			`;
+		}
+	} else if (data.sucesso) {
+		abrirModal("Sucesso", data.sucesso);
+		if (document.querySelector(".modal-content")) {
+			document.querySelector(".modal-content").innerHTML = `
+			<h2>Sucesso</h2>
+			<p>${data.sucesso}</p>
+			<div>
+				<button onclick=fecharModal()>Fechar</button>
+			</div>
+			`;
+		}
+		inputCodigo.value = "";
 	}
 });

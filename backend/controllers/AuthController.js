@@ -30,9 +30,10 @@ class AuthController {
       if (!role || !email || !senha) {
         return res.status(400).json({ erro: "Todos os campos devem ser preenchidos" });
       }
-      if (role === "cliente") {
-        conn.execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email], async (error, rows) => {
-          if (error) return res.status(500).json({ erro: error });
+      
+      try {
+        if (role === "cliente") {
+          const [rows] = await conn.promise().execute("SELECT id_cliente, email, senha FROM clientes WHERE email = ?", [email]);
           if (rows.length <= 0) return res.status(404).json({ erro: "E-mail ou senha incorretos" });
           const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
           if (!verificaSenha) return res.status(400).json({ erro: "E-mail ou senha incorretos" });
@@ -55,10 +56,8 @@ class AuthController {
             maxAge: 1000 * 60 * 5 // 5 min
           });
           return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
-        });
-      } else if (role === "nutri") {
-        conn.execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email], async (error, rows) => {
-          if (error) return res.status(500).json({ erro: error });
+        } else if (role === "nutri") {
+          const [rows] = await conn.promise().execute("SELECT id_nutricionista, email, senha FROM nutricionistas WHERE email = ?", [email]);
           if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
           const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
           if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
@@ -81,9 +80,35 @@ class AuthController {
             maxAge: 1000 * 60 * 5 // 5 min
           });
           return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
-        });
-      } else {
-        return res.status(400).json({ erro: "Campo role invalido. Use cliente ou nutri" });
+        } else if (role === "personal") {
+          const [rows] = await conn.promise().execute("SELECT id_personal, email, senha FROM personais WHERE email = ?", [email]);
+          if (rows.length <= 0) return res.status(404).json({ erro: "Erro ao fazer login" });
+          const verificaSenha = await bcrypt.compare(senha, rows[0].senha);
+          if (!verificaSenha) return res.status(400).json({ erro: "Erro ao fazer login" });
+          const accessToken = jwt.sign(
+            { id: rows[0].id_personal, email: rows[0].email, role: "personal" },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRATION || "5m" }
+          );
+          const refreshToken = jwt.sign(
+            { id: rows[0].id_personal, email: rows[0].email, role: "personal" },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" }
+          );
+          res.cookie("refreshToken", refreshToken, {
+            ...cookieConfig,
+            maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana
+          });
+          res.cookie("accessToken", accessToken, {
+            ...cookieConfig,
+            maxAge: 1000 * 60 * 5 // 5 min
+          });
+          return res.status(200).json({ sucesso: "Login realizado com sucesso", accessToken });
+        } else {
+          return res.status(400).json({ erro: "Campo role invalido" });
+        }
+      } catch (loginError) {
+        return res.status(500).json({ erro: loginError });
       }
     } catch (error) {
       return res.status(500).json({ erro: error });
@@ -112,8 +137,8 @@ class AuthController {
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) return res.status(401).json({ erro: "Refresh token não fornecido" });
       
-      jwt.verify(refreshToken, process.env.JWT_SECRET, (error, decoded) => {
-        if (error) return res.status(403).json({ erro: "Refresh token inválido ou expirado" });
+      try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
         
         const accessToken = jwt.sign({
           id: decoded.id || decoded.id_cliente,
@@ -130,7 +155,9 @@ class AuthController {
         });
         
         return res.status(200).json({ sucesso: "Token renovado", accessToken });
-      });
+      } catch (verifyError) {
+        return res.status(403).json({ erro: "Refresh token inválido ou expirado" });
+      }
     } catch (error) {
       return res.status(500).json({ erro: error.message || error });
     }

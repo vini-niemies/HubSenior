@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../styles/base.css">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="../../styles/modal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -27,20 +28,43 @@
         </div>
         <h1 class="logo title-top">HubSenior</h1>
         <div class="top-buttons">
+          <form class="form-codigo" id="associarCodigo">
+            <input id="inputCodigo" type="text" placeholder="Inserir código associador">
+            <button type="submit">+</button>
+          </form>
           <button id="logoutBtn">Logout</button>
         </div>
       </div>
       <hr class="title-line">
-      <div>
-
-        <p class="subtitle">Minhas Dietas</p>
-        <div id="listaDietasCliente" class="lista-dietas"></div>
-
+      <div class="cliente-main">
+        <div class="dietas-container cliente-main-areas">
+          <div class="dietas-container-title">
+            <i class="fa-solid fa-apple-whole icone-fontawesome" style="color: #f27121;"></i>
+            <div class="dietas-container-title-text">Dietas</div>
+          </div>
+          <ul class="dieta-container-list">
+          </ul>
+        </div>
+        <div class="treinos-container cliente-main-areas">
+          <div class="treinos-container-title">
+            <i class="fa-solid fa-dumbbell icone-fontawesome" style="color: #f27121;"></i>
+            <div class="dietas-container-title-text">Treinos</div>
+          </div>
+          <ul class="treinos-list">
+            <li class="treino-item">Treino de Força</li>
+            <li class="treino-item">Peito</li>
+            <li class="treino-item">Ombro</li>
+          </ul>
+        </div>
+        <div class="usuarios-container cliente-main-areas">
+          <div class="usuarios-container-title">Usuários Associados</div>
+          <ul class="usuarios-list"></ul>
+        </div>
       </div>
   </main>
 
   <script src="../../functions/controlarSessao.js"></script>
   <script src="./indexCliente.js"></script>
-</body>
+</body>a
 
 </html>

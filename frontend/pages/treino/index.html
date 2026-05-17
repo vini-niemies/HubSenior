@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubSenior | Dieta</title>
+  <link rel="stylesheet" href="../../styles/base.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="../../styles/modal.css">
+</head>
+
+<body>
+  <div id="modal" class="modal">
+  </div>
+  <div class="background"></div>
+  <main class="container">
+    <div class="login-box">
+      <h1 class="logo title-top">HubSenior <button class="ancoraDash" id="voltarBtn">Dashboard</button></h1>
+      <hr class="title-line">
+      <form class="login-box" id="form-treino">
+
+        <div class="input-box">
+          <input type="text" id="idCliente" required>
+          <label class="input-label">Id do Cliente</label>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="tituloDieta" required>
+          <label class="input-label">Título</label>
+        </div>
+
+        <div class="exercicios-box">
+          <h2>Exercicios</h2>
+
+          <fieldset>
+            <h4 class="member"><strong>Membros Inferiores (Pernas)</strong></h4>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Pernas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="sentar_levantar">
+                Sentar e Levantar da Cadeira
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/49_20NXycwE" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Pernas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="panturrilha">
+                Elevação de Panturrilha
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/qYVo2f2ZKRU" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Pernas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="abducao_quadril">
+                Abdução de Quadril
+              </label>
+              <a class="video-link" href="https://www.youtube.com/watch?v=fjCAUVpKFUo" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <h4 class="member"><strong>Membros Superiores (Braços e Costas)</strong></h4>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Bracos e Costas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="remada_sentada">
+                Remada Sentada
+              </label>
+              <a class="video-link" href="https://www.youtube.com/watch?v=dUy0chKG-yo" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Bracos e Costas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="desenvolvimento_ombros">
+                Desenvolvimento de Ombros
+              </label>
+              <a class="video-link" href="https://www.youtube.com/watch?v=q8qDFKSQ7xE" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Bracos e Costas">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="rosca_biceps">
+                Rosca Bíceps
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/ktPuE8i1qlA" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <h4 class="member"><strong>Core e Equilíbrio</strong></h4>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Core">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="caminhada_linha">
+                Caminhada Calcanhar-Pontas
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/kGcixnMB5ZE" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Core">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="abdominal_cadeira">
+                Abdominal na Cadeira
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/Ou5DaebhaQg" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <h4 class="member"><strong>Alongamento e Flexibilidade</strong></h4>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Flexibilidade">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="alongamento_coxa">
+                Alongamento de Coxa (Posterior)
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/AsDUBqRWGhM" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Flexibilidade">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="alongamento_peitoral">
+                Alongamento de Peitoral
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/VoAa_5_zfFM" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+
+            <div class="exercise-item">
+              <input type="hidden" class="grupo" value="Flexibilidade">
+              <label>
+                <input type="checkbox" class="exercicio" name="exercicio" value="rotacao_tronco">
+                Rotação de Tronco Sentado
+              </label>
+              <a class="video-link" href="https://www.youtube.com/shorts/qhVkYsX8U_4" target="_blank" rel="noopener">Vídeo</a>
+              <input type="text" class="descanso" placeholder="Tempo de descanço por série">
+              <input type="number" class="repeticoes" placeholder="Repetições" min="1" max="4">
+              <input type="number" class="carga" placeholder="Carga(kg)">
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="exercicios-box">
+          <h2>Dia da Semana</h2>
+          <fieldset>
+            <label>
+              <input type="radio" name="diaSemana" value="Segunda-Feira">
+              Segunda-Feira
+            </label><br>
+            <label>
+              <input type="radio" name="diaSemana" value="Terça-Feira">
+              Terça-Feira
+            </label><br>
+            <label>
+              <input type="radio" name="diaSemana" value="Quarta-Feira">
+              Quarta-Feira
+            </label><br>
+            <label>
+              <input type="radio" name="diaSemana" value="Quinta-Feira">
+              Quinta-Feira
+            </label><br>
+            <label>
+              <input type="radio" name="diaSemana" value="Sexta-Feira">
+              Sexta-Feira
+            </label><br>
+            <label>
+              <input type="radio" name="diaSemana" value="Sábado">
+              Sábado
+            </label><br>
+          </fieldset>
+        </div>
+  
+        <div class="input-box">
+          <input type="text" id="objetivosTreino" required>
+          <label class="input-label">Objetivos</label>
+        </div>
+        <div class="input-box">
+          <button id="cadastrarDietaBtn" type="submit">Criar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script src="../../functions/controlarSessao.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

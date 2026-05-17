@@ -1,20 +1,20 @@
 const clientesCardsDiv = document.querySelector(".clientes-card-container");
 const copiarCodigoBtn = document.getElementById("copiarbtn");
-const olaNutri = document.querySelector(".title-nutri");
+const olaPersonal = document.querySelector(".title-personal");
 const logoutBtn = document.getElementById("logoutBtn");
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const responseNutri = await fetch("http://localhost:3000/user/nutricionista");
-  const dataNutri = await responseNutri.json();
-  if (dataNutri.erro) return clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus dados</p>`;
-  olaNutri.innerHTML = `Olá, ${dataNutri.sucesso.nome}<p>Bem-Vindo de volta!</p>`;
+  const reqPersonal = await fetch("http://localhost:3000/user/personal", { credentials: "include" });
+  const dataPersonal = await reqPersonal.json();
+  if (dataPersonal.erro) return clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus dados</p>`;
+  olaPersonal.innerHTML = `Olá, ${dataPersonal.sucesso.nome}<p>Bem-Vindo de volta!</p>`;
   if (copiarCodigoBtn) {
     copiarCodigoBtn.addEventListener("click", async () => {
-      await copiar(dataNutri.sucesso.codigo);
+      await copiar(dataPersonal.sucesso.codigo);
     });
   }
 
-  const responseClientes = await fetch("http://localhost:3000/user/nutricionista/clientes");
+  const responseClientes = await fetch("http://localhost:3000/user/personal/clientes", { credentials: "include" });
   const dataClientes = await responseClientes.json();
   if (dataClientes.erro) clientesCardsDiv.innerHTML = `<p class="cards-div-message">Falha ao encontrar seus clientes</p>`;
   const clientes = dataClientes.sucesso;
@@ -39,8 +39,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="card-texto"><span>Nascimento:</span> ${formatarData(c.data_nascimento)}</div>
         <div class="card-texto"><span>Endereço:</span> ${c.endereco}</div>
         <div class="card-texto"><span>Objetivo:</span> ${c.objetivo}</div>
-        <div class="card-texto"><span>Dietas:</span></div>
-        <div class="lista-dietas"></div>
+        <div class="card-texto"><span>Treinos:</span></div>
+        <div class="lista-treinos"></div>
         <div class="card-botoes" onclick="verDados(${c.id_cliente})">Fechar</div>
       </div>
     </div>
@@ -48,28 +48,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 `).join('');
   }
 });
+
 async function copiar(texto) {
   if (!texto) return;
-
   try {
     await navigator.clipboard.writeText(texto);
   } catch (error) {
     console.log("Erro ao copiar codigo:", error);
   }
 }
+
 async function logout() {
   const response = await fetch("http://localhost:3000/auth/logout", {
-    method: "POST"
+    method: "POST",
+    credentials: "include"
   });
   const data = await response.json();
   if (data.error) {
     const response = await fetch("http://localhost:3000/auth/me", {
-      method: "POST"
+      method: "POST",
+      credentials: "include"
     });
     const data = await response.json();
     if (data.erro) {
       const responseRefresh = await fetch("http://localhost:3000/auth/refresh", {
-        method: "POST"
+        method: "POST",
+        credentials: "include"
       });
       const dataRefresh = await responseRefresh.json();
       if (dataRefresh.erro) return window.location.href = "../home/index.html";
@@ -80,64 +84,58 @@ async function logout() {
     window.location.href = "../home/index.html";
   }
 }
+
 function formatarData(data) {
   const newData = new Date(data);
   const dataFormatada = newData.toLocaleDateString('pt-BR');
   return dataFormatada;
 }
-async function carregarDietas(id, card) {
-  const listaDietas = card.querySelector(".lista-dietas");
-  if (!listaDietas) return;
 
-  listaDietas.innerHTML = `<p class="cards-div-message">Carregando dietas...</p>`;
+async function carregarTreinos(id, card) {
+  const listaTreinos = card.querySelector(".lista-treinos");
+  if (!listaTreinos) return;
+
+  listaTreinos.innerHTML = `<p class="cards-div-message">Carregando treinos...</p>`;
 
   try {
-    const [responseDietas, responseConsulta] = await Promise.all([
-      fetch(`http://localhost:3000/dieta?id=` + id),
-      fetch(`http://localhost:3000/consulta?id=` + id)
-    ]);
-    const dataDietas = await responseDietas.json();
-    const dataConsulta = await responseConsulta.json();
+    const responseTreinos = await fetch(`http://localhost:3000/treino?id=` + id, {
+      credentials: "include"
+    });
+    const dataTreinos = await responseTreinos.json();
 
-    const possuiConsulta = Boolean(dataConsulta?.sucesso?.possuiConsulta);
-    const botaoRegistrarConsulta = !possuiConsulta
-      ? `<a class="card-botoes" href="../consulta/index.html?id_cliente=${id}">Registrar Consulta</a>`
-      : "";
-
-    if (dataDietas.erro) {
-      listaDietas.innerHTML = `<p class="cards-div-message">Falha ao encontrar dietas</p>`;
+    if (dataTreinos.erro) {
+      listaTreinos.innerHTML = `<p class="cards-div-message">Falha ao encontrar treinos</p>`;
       return;
     }
 
-    const dietas = Array.isArray(dataDietas.sucesso) ? dataDietas.sucesso : [];
-    if (dietas.length <= 0) {
-      listaDietas.innerHTML = `<p class="cards-div-message">Nenhuma dieta cadastrada</p>
-      <a class="card-botoes" href="../dieta/index.html?id_cliente=${id}">Criar Dieta</a>
-      ${botaoRegistrarConsulta}
-      `;
+    const treinos = Array.isArray(dataTreinos.sucesso) ? dataTreinos.sucesso : [];
+    
+    listaTreinos.innerHTML = `
+      <a class="card-botoes" href="../treino/index.html?id_cliente=${id}">Criar Treino</a>
+    `;
+
+    if (treinos.length <= 0) {
+      listaTreinos.innerHTML += `<p class="cards-div-message">Nenhum treino cadastrado</p>`;
       return;
     }
-      listaDietas.innerHTML = `
-      <a class="card-botoes" href="../dieta/index.html?id_cliente=${id}">Criar Dieta</a>
-      ${botaoRegistrarConsulta}
-      `;
 
-    listaDietas.innerHTML += dietas.map((dieta) => `
+    listaTreinos.innerHTML += treinos.map((treino) => `
     <div class="card-cliente card-dieta">
       <div class="card-content">
-        <div class="card-texto"><span>Título:</span> ${dieta.titulo_dieta}</div>
+        <div class="card-texto"><span>Título:</span> ${treino.titulo_treino}</div>
         <div class="card-botoes-container dieta-acoes">
-          <div class="card-botoes" data-dieta-id="${dieta.id_dieta}" onclick="excluirDieta(${dieta.id_dieta}, ${id})">Excluir Dieta</div>
-          <a class="card-botoes" data-dieta-id="${dieta.id_dieta}" href="../dieta/index.html?id_dieta=${dieta.id_dieta}">Atualizar Dieta</a>
+          <div class="card-botoes" data-treino-id="${treino.id_treino}" onclick="excluirTreino(${treino.id_treino}, ${id})">Excluir Treino</div>
+          <a class="card-botoes" data-treino-id="${treino.id_treino}" href="../treino/index.html?id_treino=${treino.id_treino}">Atualizar Treino</a>
         </div>
       </div>
     </div>
   `).join("");
   } catch (error) {
-    console.log("Erro ao buscar dietas:", error);
-    listaDietas.innerHTML = `<p class="cards-div-message">Falha ao carregar dietas</p>`;
+    console.log("Erro ao buscar treinos:", error);
+    listaTreinos.innerHTML = `<p class="cards-div-message">Falha ao carregar treinos</p>`;
   }
 }
+
 async function verDados(id) {
   const card = document.getElementById(id);
   if (!card) return;
@@ -160,33 +158,34 @@ async function verDados(id) {
   cardBotoes.style.display = isInfoVisible ? "flex" : "none";
 
   if (!isInfoVisible) {
-    await carregarDietas(id, card);
+    await carregarTreinos(id, card);
   }
 }
-async function excluirDieta(dietaId, clienteId) {
+
+async function excluirTreino(treinoId, clienteId) {
   const card = document.getElementById(clienteId);
   try {
-    const response = await fetch("http://localhost:3000/dieta/" + dietaId, {
+    const response = await fetch("http://localhost:3000/treino/" + treinoId, {
       method: "DELETE",
       credentials: "include"
     });
     const data = await response.json();
     if (!data.sucesso) return;
-    await carregarDietas(clienteId, card);
+    await carregarTreinos(clienteId, card);
     alert(data.sucesso);
   } catch (error) {
-    alert("Erro ao deletar dieta");
+    alert("Erro ao deletar treino");
   }
 }
 
 function fecharModal() {
-	document.querySelector(".modal").classList.remove("is-active");
-	document.querySelector(".modal").innerHTML = "";
+  document.querySelector(".modal").classList.remove("is-active");
+  document.querySelector(".modal").innerHTML = "";
 }
 
 function abrirModal(titulo, descricao) {
-	document.querySelector(".modal").classList.add("is-active");
-	document.querySelector(".modal").innerHTML += `
+  document.querySelector(".modal").classList.add("is-active");
+  document.querySelector(".modal").innerHTML += `
 	<div class="modal-content">
       <h2>${titulo}</h2>
       <p>${descricao}</p>

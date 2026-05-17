@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const responseRole = await fetch("http://localhost:3000/auth/me", {
-        method: "POST"
+        method: "POST",
+        credentials: "include"
     });
     const data = await responseRole.json();
     if (!data.sucesso) return;
-    const response = await fetch(data.sucesso.role === "nutricionista" ? "http://localhost:3000/user/nutricionista" : "http://localhost:3000/user/cliente");
+    const response = await fetch(`http://localhost:3000/user/${data.sucesso.role}`);
     const dataDados = await response.json();
     if (!dataDados.sucesso) return;
     const dados = dataDados.sucesso;
@@ -136,6 +137,68 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         });
+    } else if (data.sucesso.role === "personal") {
+        document.querySelector(".login-box").innerHTML += `<form id="formAtualizarPersonal">
+                    <div class="input-box">
+                        <input type="text" id="nomeInput" name="nome" required value="${dados.nome}">
+                        <label>Nome Completo</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="email" id="emailInput" name="email" required value="${dados.email}">
+                        <label>E-mail</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="text" id="telefoneInput" name="telefone" required value="${dados.telefone}">
+                        <label>Telefone</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="text" id="instagramInput" name="instagram" required value="${dados.instagram}">
+                        <label>Instagram</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="text" id="enderecoInput" name="endereco" required value="${dados.endereco}">
+                        <label>Endereco</label>
+                    </div>
+
+                    <button id="loginBtn" type="submit">Salvar</button>
+                    <button class=ancoraBtn id="voltarBtn">Voltar</button>
+                    <button id="excluirContaBtnCliente" type="button" onclick="excluirConta()">Excluir Conta</button>
+                </form>`;
+
+        document.getElementById("voltarBtn").onclick = (e) => {
+            e.preventDefault();
+            abrirModal("Sair", "Deseja sair?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = () => {
+                window.location.href = "../dashboards/dashboardpersonal.html";
+            }
+        }
+
+        const formAtualizarPersonal = document.getElementById("formAtualizarPersonal");
+        formAtualizarPersonal.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const payload = {
+                nome: document.getElementById("nomeInput").value,
+                email: document.getElementById("emailInput").value,
+                telefone: document.getElementById("telefoneInput").value,
+                instagram: document.getElementById("instagramInput").value,
+                endereco: document.getElementById("enderecoInput").value
+            };
+            abrirModal("Salvar Alterações", "Deseja salvar as alterações?");
+            if (!document.getElementById("modalAcceptBtn")) return;
+            document.getElementById("modalAcceptBtn").onclick = async () => {
+                const resultado = await atualizarDadosPersonal(payload);
+                if (resultado?.sucesso) {
+                    return window.location.href = "../dashboards/dashboardpersonal.html";
+                } else {
+                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                }
+            }
+        });
     }
 });
 ///funcao pra colocar a data do sql em formato do input do html
@@ -148,7 +211,8 @@ function formatSqlDateToInput(dateValue) {
 }
 async function logout() {
     const response = await fetch("http://localhost:3000/auth/logout", {
-        method: "POST"
+        method: "POST",
+        credentials: "include"
     });
     const data = await response.json();
     if (data.error) {
@@ -175,10 +239,8 @@ async function excluirConta() {
                 credentials: "include"
             });
             const data = await response.json();
-            if (data.erro) return console.log(reqData.erro);;
-            const URI = data.sucesso.role === "nutricionista"
-                ? "http://localhost:3000/user/nutricionista"
-                : "http://localhost:3000/user/cliente";
+            if (data.erro) return console.log(data.erro);
+            const URI = `http://localhost:3000/user/${data.sucesso.role}`;
             const req = await fetch(URI, {
                 method: "DELETE",
                 credentials: "include"
@@ -205,6 +267,18 @@ async function atualizarDadosCliente(payload) {
 }
 async function atualizarDadosNutricionista(payload) {
     const response = await fetch("http://localhost:3000/user/nutricionista", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+        credentials: "include"
+    });
+
+    return await response.json();
+}
+async function atualizarDadosPersonal(payload) {
+    const response = await fetch("http://localhost:3000/user/personal", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

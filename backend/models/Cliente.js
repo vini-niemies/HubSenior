@@ -1,17 +1,19 @@
 class Cliente {
-  constructor(nome, email, senha, dataNasc, codigo, idNutri, objetivo, endereco) {
+  constructor(nome, email, senha, dataNasc, objetivo, endereco, codigoNutri, codigoPersonal, idNutri, idPersonal) {
     this.nome = nome;
     this.email = email;
     this.senha = senha;
     this.dataNasc = dataNasc;
-    this.codigo = codigo;
-    this.idNutri = idNutri;
     this.objetivo = objetivo;
     this.endereco = endereco;
+    this.codigoNutri = codigoNutri;
+    this.codigoPersonal = codigoPersonal;
+    this.idNutri = idNutri;
+    this.idPersonal = idPersonal;
   }
 
   toArray() {
-    return [this.nome, this.email, this.senha, this.dataNasc, this.codigo, this.idNutri, this.objetivo, this.endereco];
+    return [this.nome, this.email, this.senha, this.dataNasc, this.objetivo, this.endereco, this.codigoNutri, this.codigoPersonal, this.idNutri, this.idPersonal];
   }
 }
 

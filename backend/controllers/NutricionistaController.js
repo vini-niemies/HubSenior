@@ -8,10 +8,8 @@ class NutricionistaController {
   async VerClientes(req, res) {
     try {
       const id = req.user.id;
-      conn.execute("SELECT id_cliente, nome, email, data_nascimento, endereco, objetivo FROM clientes WHERE id_nutricionista = ?", [id], (error, results) => {
-        if (error) return res.status(500).json({ erro: error });
-        return res.status(200).json({ sucesso: results });
-      });
+      const [results] = await conn.promise().execute("SELECT id_cliente, nome, email, data_nascimento, endereco, objetivo FROM clientes WHERE id_nutricionista = ?", [id]);
+      return res.status(200).json({ sucesso: results });
     } catch (error) {
       return res.status(500).json({ erro: error });
     }
@@ -30,7 +28,7 @@ class NutricionistaController {
         return res.status(400).json({ erro: "E-mail inválido" });
       }
 
-      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas UNION SELECT email from");
+      const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas UNION SELECT email FROM personais");
       if (rows && rows.length > 0) {
         const emailsCadastrados = rows.map(e => e.email);
         if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });
@@ -51,10 +49,8 @@ class NutricionistaController {
         if (crnsCadastrados.includes(crn)) return res.status(409).json({ erro: "CRN já está cadastrado" });
       }
 
-      conn.execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray(), (error, results) => {
-        if (error) return res.status(500).json({ erro: error });
-        return res.status(201).json({ sucesso: "Usuario Criado" });
-      });
+      const [result] = await conn.promise().execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray());
+      return res.status(201).json({ sucesso: "Usuario Criado" });
       
     } catch (error) {
       return res.status(500).json({ erro: error });
@@ -63,12 +59,10 @@ class NutricionistaController {
   async VerDadosNutricionista(req, res) {
     try {
       const id = req.user.id;
-      conn.execute("SELECT * FROM nutricionistas WHERE id_nutricionista = ?", [id], (error, rows) => {
-        if (error) return res.status(500).json({ erro: error });
-        return res.status(200).json({ sucesso: rows[0] });
-      });
+      const [rows] = await conn.promise().execute("SELECT * FROM nutricionistas WHERE id_nutricionista = ?", [id]);
+      if (!rows || rows.length === 0) return res.status(500).json({ erro: "Não encontrado" });
+      return res.status(200).json({ sucesso: rows[0] });
     } catch (error) {
-
       return res.status(500).json({ erro: error });
     }
   }
@@ -81,15 +75,29 @@ class NutricionistaController {
         return res.status(400).json({ erro: "Campos obrigatorios faltando: nome, email, telefone, instagram, endereco" });
       }
 
-      conn.execute(
-        "UPDATE nutricionistas SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_nutricionista = ?",
-        [nome, email, telefone, instagram, endereco, id],
-        (error, results) => {
-          if (error) return res.status(500).json({ erro: error });
-          if (results.affectedRows === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
-          return res.status(200).json({ sucesso: "Dados atualizados com sucesso" });
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ erro: "E-mail inválido" });
+      }
+
+      const [current] = await conn.promise().execute("SELECT email FROM nutricionistas WHERE id_nutricionista = ?", [id]);
+      if (!current || current.length === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
+      const currentEmail = current[0].email;
+
+      if (email !== currentEmail) {
+        const [rows] = await conn.promise().execute("SELECT email FROM clientes UNION SELECT email FROM nutricionistas UNION SELECT email FROM personais");
+        if (rows && rows.length > 0) {
+          const emailsCadastrados = rows.map(e => e.email);
+          if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });
         }
+      }
+
+      const [results] = await conn.promise().execute(
+        "UPDATE nutricionistas SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_nutricionista = ?",
+        [nome, email, telefone, instagram, endereco, id]
       );
+      if (results.affectedRows === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
+      return res.status(200).json({ sucesso: "Dados atualizados com sucesso" });
     } catch (error) {
       return res.status(500).json({ erro: error });
     }
@@ -98,51 +106,35 @@ class NutricionistaController {
     try {
       const id = req.user.id;
 
-      conn.beginTransaction((transactionError) => {
-        if (transactionError) return res.status(500).json({ erro: transactionError });
+      await conn.promise().beginTransaction();
 
-        conn.execute(
+      try {
+        await conn.promise().execute(
           "UPDATE clientes SET id_nutricionista = NULL WHERE id_nutricionista = ?",
-          [id],
-          (clientesError) => {
-            if (clientesError) {
-              return conn.rollback(() => res.status(500).json({ erro: clientesError }));
-            }
-
-            conn.execute(
-              "UPDATE dietas SET id_nutricionista = NULL WHERE id_nutricionista = ?",
-              [id],
-              (dietasError) => {
-                if (dietasError) {
-                  return conn.rollback(() => res.status(500).json({ erro: dietasError }));
-                }
-
-                conn.execute(
-                  "DELETE FROM nutricionistas WHERE id_nutricionista = ?",
-                  [id],
-                  (nutriError, results) => {
-                    if (nutriError) {
-                      return conn.rollback(() => res.status(500).json({ erro: nutriError }));
-                    }
-
-                    if (results.affectedRows === 0) {
-                      return conn.rollback(() => res.status(404).json({ erro: "Usuário não encontrado" }));
-                    }
-
-                    conn.commit((commitError) => {
-                      if (commitError) {
-                        return conn.rollback(() => res.status(500).json({ erro: commitError }));
-                      }
-
-                      return res.status(200).json({ sucesso: "Usuário excluído com sucesso" });
-                    });
-                  }
-                );
-              }
-            );
-          }
+          [id]
         );
-      });
+
+        await conn.promise().execute(
+          "UPDATE dietas SET id_nutricionista = NULL WHERE id_nutricionista = ?",
+          [id]
+        );
+
+        const [results] = await conn.promise().execute(
+          "DELETE FROM nutricionistas WHERE id_nutricionista = ?",
+          [id]
+        );
+
+        if (results.affectedRows === 0) {
+          await conn.promise().rollback();
+          return res.status(404).json({ erro: "Usuário não encontrado" });
+        }
+
+        await conn.promise().commit();
+        return res.status(200).json({ sucesso: "Usuário excluído com sucesso" });
+      } catch (error) {
+        await conn.promise().rollback();
+        throw error;
+      }
     } catch (error) {
       return res.status(500).json({ erro: error });
     }

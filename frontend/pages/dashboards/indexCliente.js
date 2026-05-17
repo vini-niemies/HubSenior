@@ -79,7 +79,65 @@ function renderizarDietas(dietas) {
 	});
 }
 
+function renderizarTreinos(treinos) {
+	if (!treinos) {
+		return;
+	}
+	const listaTreinos = document.querySelector(".treinos-container-list");
+	listaTreinos.innerHTML = "";
+	if (treinos.length < 1) {
+		const li = document.createElement("li");
+		li.className = "treino-item";
+		li.innerHTML = `
+			<div class="dieta-item-header">
+                <div class="dieta-item-text dieta-item-title">Sem treinos <i class="fa-solid fa-face-sad-cry" style="color: rgba(242,113,33,0.8);"></i></div>
+            </div>
+		`
+		listaTreinos.appendChild(li);
+	}
+	
+	treinos.forEach(t => {
+		const li = document.createElement("li");
+		li.className = "dieta-item";
+		li.innerHTML = `
+            <div class="dieta-item-header">
+                <div class="dieta-item-text dieta-item-title">${t.nome_treino}</div>
+                <button class="btn-interact"><i class="fa-solid fa-caret-right" style="color: rgb(255, 255, 255);"></i></button>
+            </div>
+            <div class="dieta-item-mais">
+                <div class="dieta-item-text">Dia: ${t.dia_semana}</div>
+                ${t.exercicios.map(e => `
+                <div class="dieta-item-dieta">
+                    <div class="dieta-item-dieta-title">${e.nome}</div>
+                    <div class="dieta-item-dieta-hour">Grupo: ${e.grupo_muscular}</div>
+                    <div class="dieta-item-text">Repetições: ${e.repeticoes} | Carga: ${e.carga}kg</div>
+                    <div class="dieta-item-text">Descanso: ${e.tempo_descanso}s</div>
+                    ${e.link_video ? `<div class="dieta-item-subtext"><a class="treino-video-link" href="${e.link_video}" target="_blank" rel="noopener">Video</a></div>` : ""}
+                </div>`).join("")}
+                <div class="dieta-item-subtext">Objetivo: ${t.objetivos || "Não definido"}</div>
+            </div>
+        `;
+		listaTreinos.appendChild(li);
+	});
+}
+
 document.querySelector(".dieta-container-list").addEventListener("click", (e) => {
+	const btn = e.target.closest(".btn-interact");
+	if (!btn) return;
+
+	const item = btn.closest(".dieta-item");
+	const mais = item.querySelector(".dieta-item-mais");
+	const icon = btn.querySelector("i");
+
+	mais.classList.toggle("active");
+	if (mais.classList.contains("active")) {
+		icon.classList.replace("fa-caret-right", "fa-caret-down");
+	} else {
+		icon.classList.replace("fa-caret-down", "fa-caret-right");
+	}
+});
+
+document.querySelector(".treinos-container-list").addEventListener("click", (e) => {
 	const btn = e.target.closest(".btn-interact");
 	if (!btn) return;
 
@@ -103,21 +161,25 @@ async function carregarDietasCliente() {
 	return await response.json();
 }
 
+async function carregarTreinosCliente() {
+	const response = await fetch("http://localhost:3000/treino", {
+		method: "GET",
+		credentials: "include"
+	});
+	return await response.json();
+}
+
 function renderizarAssociados(associados) {
 	if (!associados) return;
 	const usersList = document.querySelector(".usuarios-list");
 	usersList.innerHTML = "";
 
-	if (associados.length < 1) {
-		const li = document.createElement("li");
-		li.classList.add("usuario-item");
-		li.innerHTML = "Sem usuários associados";
-		usersList.appendChild(li);
-		return;
-	}
 	const associadosChaves = Object.keys(associados);
+	let hasAssociados = false;
+	
 	associadosChaves.forEach(a => {
 		if (associados[a] === null) return;
+		hasAssociados = true;
 		const li = document.createElement("li");
 		li.classList.add("usuario-item");
 		if (a.includes("nutricionista")) {
@@ -127,6 +189,13 @@ function renderizarAssociados(associados) {
 		}
 		usersList.appendChild(li);
 	});
+
+	if (!hasAssociados) {
+		const li = document.createElement("li");
+		li.classList.add("usuario-item");
+		li.innerHTML = "Sem usuários associados";
+		usersList.appendChild(li);
+	}
 }
 
 async function carregarAssociadosCliente() {
@@ -169,11 +238,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 
 		const dietas = await carregarDietasCliente();
-		renderizarDietas(dietas.sucesso);
+		if (dietas.sucesso) {
+			renderizarDietas(dietas.sucesso);
+		}
+
+		const treinos = await carregarTreinosCliente();
+		if (treinos.sucesso) {
+			renderizarTreinos(treinos.sucesso);
+		}
+
 		const associados = await carregarAssociadosCliente();
-		renderizarAssociados(associados.sucesso);
+		if (associados.sucesso) {
+			renderizarAssociados(associados.sucesso);
+		}
 	} catch (error) {
-		return;
+		console.error("Erro ao carregar dados do dashboard:", error);
 	}
 });
 

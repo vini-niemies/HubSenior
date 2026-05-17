@@ -38,7 +38,7 @@ class DietaController {
         );
 
         if (clienteRows.length <= 0) {
-          return res.status(404).json({ erro: "Cliente não encontrado para este nutricionista" });
+          return res.status(404).json({ erro: "Cliente não encontrado for este nutricionista" });
         }
 
         const dieta = new Dieta(
@@ -84,17 +84,20 @@ class DietaController {
 
   async ListarDietas(req, res) {
     try {
+
       const role = req.user.role;
       const { id } = req.body || {};
-      const idCliente = id || req.query?.id;
+      const idCliente = id || req.query?.id || (role === "cliente" ? req.user.id : null);
 
-      if (role === "nutricionista" && !idCliente) {
-        return res.status(400).json({ erro: "id do cliente é obrigatório para nutricionista" });
+      if (!idCliente) {
+        return res.status(400).json({ erro: "id do cliente é obrigatório" });
       }
 
       const query = role === "nutricionista" ? "SELECT * FROM dietas WHERE id_cliente = ? AND id_nutricionista = ?" :
         "SELECT * FROM dietas WHERE id_cliente = ?";
-      const params = role === "nutricionista" ? [idCliente, req.user.id] : [req.user.id];
+      
+      const queryParam = role === "cliente" ? req.user.id : idCliente;
+      const params = role === "nutricionista" ? [queryParam, req.user.id] : [queryParam];
       
       const [dietasRows] = await conn.promise().execute(query, params);
       
@@ -208,7 +211,7 @@ class DietaController {
         );
 
         if (buscarDietaRows.length <= 0) {
-          return res.status(404).json({ erro: "Dieta não encontrada para este nutricionista" });
+          return res.status(404).json({ erro: "Dieta não encontrada for este nutricionista" });
         }
 
         await conn.promise().beginTransaction();

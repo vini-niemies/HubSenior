@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (resultado?.sucesso) {
                     return window.location.href = "../dashboards/dashboardnutricionista.html";
                 } else {
-                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                    fecharModal();
+                    return abrirAlerta("Erro", resultado?.erro || "Erro ao atualizar dados");
                 }
             }
         });
@@ -133,7 +134,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (resultado?.sucesso) {
                     return window.location.href = "../dashboards/dashboardcliente.html";
                 } else {
-                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                    fecharModal();
+                    return abrirAlerta("Erro", resultado?.erro || "Erro ao atualizar dados");
                 }
             }
         });
@@ -195,7 +197,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (resultado?.sucesso) {
                     return window.location.href = "../dashboards/dashboardpersonal.html";
                 } else {
-                    return alert(resultado?.erro || "Erro ao atualizar dados");
+                    fecharModal();
+                    return abrirAlerta("Erro", resultado?.erro || "Erro ao atualizar dados");
                 }
             }
         });
@@ -288,6 +291,21 @@ async function atualizarDadosPersonal(payload) {
     });
 
     return await response.json();
+}
+
+function abrirAlerta(titulo, descricao) {
+    const modal = document.querySelector(".modal");
+    if (!modal) return;
+    modal.classList.add("is-active");
+    modal.innerHTML = `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button onclick="fecharModal()">Fechar</button>
+      </div>
+    </div>
+	`;
 }
 
 function fecharModal() {

@@ -1,14 +1,21 @@
 .login-box {
-  width: 90%;
-  min-height: 90%;
-  max-height: 95%;
-  overflow-y: scroll;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  width: min(1400px, 95vw);
+  height: 90vh;
+  min-height: 600px;
+  max-height: 95vh;
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: 2.5rem;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
 }
 
 .login-box:hover {
-  transform: translateY(0);
+  transform: none;
 }
 
 .form-codigo {
@@ -140,84 +147,116 @@
 }
 
 .card-cliente {
-  width: 90%;
-  max-width: 300px;
+  width: 100%;
+  max-width: 320px;
   min-height: 170px;
-  flex: 1 1 250px;
-  border-radius: 4px;
-  backdrop-filter: blur(10px);
-  border: 1px solid white;
+  flex: 1 1 280px;
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  background-color: rgba(255, 255, 255, 0.08);
-  transition: transform 0.25s ease-out;
+  background: rgba(30, 41, 59, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
 }
 
 .card-cliente:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(242, 113, 33, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .card-content {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 1em;
+  gap: 12px;
+  padding: 1.5rem;
 }
 
 .card-texto {
   text-align: left;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .card-texto span {
-  font-weight: bold;
-  color: #ff6600;
+  font-weight: 700;
+  color: #f27121;
+  min-width: 70px;
 }
 
 .card-botoes-container {
-  margin-top: 1em;
+  margin-top: 1rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-around;
-  gap: 1em;
+  justify-content: stretch;
+  gap: 10px;
 }
 
 .card-info {
   display: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
+  margin-top: 5px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card-botoes {
-  padding: 0.5em;
-  background-color: #e55a00;
-  border-radius: 4px;
-  transition: transform 0.25s ease-out;
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(135deg, #f27121, #ff8c42);
+  border-radius: 10px;
+  transition: all 0.25s ease;
   text-decoration: none;
   color: white;
-  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(242, 113, 33, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-botoes:hover {
-  transform: scale(1.05);
-  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(242, 113, 33, 0.35);
+  filter: brightness(1.1);
 }
 
 .ancora {
   text-decoration: none;
-  color: #e55a00;
+  color: #f27121;
+  font-weight: 600;
 }
 
+.lista-treinos,
 .lista-dietas {
   width: 100%;
-  margin-top: 1em;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  justify-items: center;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
 .lista-dietas .card-dieta {
-  margin: 10px auto;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  min-height: auto;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .card-info-visible {
@@ -332,29 +371,34 @@
 
 .card-title {
   display: flex;
-  justify-content: start;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .card-title img {
-  width: 50px;
+  width: 42px;
+  height: 42px;
+  background: rgba(242, 113, 33, 0.15);
+  border-radius: 50%;
+  padding: 8px;
 }
 
 .card-title-text {
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .wIcon {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
 }
 
 .card-line {
-  margin: 5px 0 10px 0;
-  border-color: rgba(255, 255, 255, 0.5);
+  margin: 8px 0 12px 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .top {
@@ -386,13 +430,18 @@
 
 .top-buttons button {
   padding: 0.75rem 1.25rem;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  font-weight: 600;
+}
+
+.top-buttons button:hover {
+  transform: translateY(-2px);
 }
 
 .top-buttons button:active {
@@ -434,7 +483,7 @@
   font-size: 0.95rem;
 }
 
-.treinos-list {
+.treinos-container-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -503,15 +552,17 @@
 }
 
 .codigo {
-  font-weight: 100;
-  background-color: transparent;
-  border: 1px solid white;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
+  font-weight: 600;
 }
 
 .codigo:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .top-buttons img {
@@ -523,11 +574,12 @@
   font-weight: 600;
   border: none;
   color: white;
+  box-shadow: 0 4px 12px rgba(242, 113, 33, 0.2);
 }
 
 #logoutBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(242, 113, 33, 0.3);
+  box-shadow: 0 8px 20px rgba(242, 113, 33, 0.4);
 }
 
 .user-info img {
@@ -552,6 +604,7 @@
     width: 96%;
     min-height: auto;
     max-height: none;
+    padding: 1.5rem;
   }
 
   .top {
@@ -661,6 +714,8 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cliente-main-areas .dietas-container-title,
@@ -806,6 +861,16 @@
 
 .dieta-item-subtext {
   color: rgba(255, 255, 255, 0.7);
+}
+
+.dieta-item-subtext .treino-video-link {
+  color: #f27121;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dieta-item-subtext .treino-video-link:hover {
+  text-decoration: underline;
 }
 
 .dieta-item-dieta {

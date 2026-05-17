@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     clientesCardsDiv.innerHTML = `<p class="cards-div-message">Clientes não encontrados, convide seus clientes</p>`;
   } else {
     clientesCardsDiv.innerHTML = "";
-    clientesCardsDiv.innerHTML += clientes.map(c => `
+    clientesCardsDiv.innerHTML += clientes.map(c => {
+      return `
   <div class="card-cliente" id=${c.id_cliente}>
     <div class="card-content">
       <div class="card-title">
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="card-texto wIcon"><img src="../../img/sUserIcon.svg" class="icon"/><span>Nome:</span> ${c.nome}</div>
       <div class="card-texto wIcon"><img src="../../img/emailIcon.svg" class="icon"/><span>Email:</span> ${c.email}</div>
       <div class="card-botoes-container principal-botoes">
-        <div class="card-botoes" onclick="verDados(${c.id_cliente})">Ver Dados</div>
+        <div class="card-botoes" onclick="verDados(${c.id_cliente})">Ver Detalhes</div>
       </div>
       <div class="card-info">
         <div class="card-texto"><span>Nascimento:</span> ${formatarData(c.data_nascimento)}</div>
@@ -45,7 +46,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     </div>
   </div>
-`).join('');
+`;
+    }).join('');
   }
 });
 async function copiar(texto) {
@@ -117,7 +119,7 @@ async function carregarDietas(id, card) {
       `;
       return;
     }
-      listaDietas.innerHTML = `
+    listaDietas.innerHTML = `
       <a class="card-botoes" href="../dieta/index.html?id_cliente=${id}">Criar Dieta</a>
       ${botaoRegistrarConsulta}
       `;
@@ -165,28 +167,43 @@ async function verDados(id) {
 }
 async function excluirDieta(dietaId, clienteId) {
   const card = document.getElementById(clienteId);
-  try {
-    const response = await fetch("http://localhost:3000/dieta/" + dietaId, {
-      method: "DELETE",
-      credentials: "include"
-    });
-    const data = await response.json();
-    if (!data.sucesso) return;
-    await carregarDietas(clienteId, card);
-    alert(data.sucesso);
-  } catch (error) {
-    alert("Erro ao deletar dieta");
-  }
+  abrirModal("Excluir Dieta", "Tem certeza que deseja excluir essa dieta? (essa alteração não pode ser desfeita)");
+  document.getElementById("modalAcceptBtn").addEventListener("click", async (e) => {
+    try {
+      const response = await fetch("http://localhost:3000/dieta/" + dietaId, {
+        method: "DELETE",
+        credentials: "include"
+      });
+      const data = await response.json();
+      if (!data.sucesso) return;
+      await carregarDietas(clienteId, card);
+      fecharModal();
+    } catch (error) {
+      fecharModal();
+      abrirAlerta("Erro", "Erro ao deletar dieta");
+    }
+  });
+}
+function abrirAlerta(titulo, descricao) {
+  document.querySelector(".modal").classList.add("is-active");
+  document.querySelector(".modal").innerHTML = `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button onclick="fecharModal()">Fechar</button>
+      </div>
+    </div>
+	`;
 }
 
 function fecharModal() {
-	document.querySelector(".modal").classList.remove("is-active");
-	document.querySelector(".modal").innerHTML = "";
+  document.querySelector(".modal").classList.remove("is-active");
+  document.querySelector(".modal").innerHTML = "";
 }
-
 function abrirModal(titulo, descricao) {
-	document.querySelector(".modal").classList.add("is-active");
-	document.querySelector(".modal").innerHTML += `
+  document.querySelector(".modal").classList.add("is-active");
+  document.querySelector(".modal").innerHTML += `
 	<div class="modal-content">
       <h2>${titulo}</h2>
       <p>${descricao}</p>
@@ -197,7 +214,6 @@ function abrirModal(titulo, descricao) {
     </div>
 	`
 }
-
 logoutBtn.addEventListener("click", () => {
   abrirModal("Sair", "Tem certeza que deseja sair?");
   if (!document.getElementById("modalAcceptBtn")) return;

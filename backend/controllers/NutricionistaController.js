@@ -8,7 +8,10 @@ class NutricionistaController {
   async VerClientes(req, res) {
     try {
       const id = req.user.id;
-      const [results] = await conn.promise().execute("SELECT id_cliente, nome, email, data_nascimento, endereco, objetivo FROM clientes WHERE id_nutricionista = ?", [id]);
+      const [results] = await conn.promise().execute(
+        "SELECT c.id_cliente, c.nome, c.email, c.data_nascimento, c.endereco, c.objetivo, p.nome AS personal_nome FROM clientes c LEFT JOIN personais p ON c.id_personal = p.id_personal WHERE c.id_nutricionista = ?",
+        [id]
+      );
       return res.status(200).json({ sucesso: results });
     } catch (error) {
       return res.status(500).json({ erro: error });

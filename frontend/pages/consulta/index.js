@@ -13,6 +13,30 @@ function normalizarDataConsulta(dataConsulta) {
   return dataConsulta.replace("T", " ") + ":00";
 }
 
+function fecharModal() {
+  const modal = document.querySelector(".modal");
+  if (modal) {
+    modal.classList.remove("is-active");
+    modal.innerHTML = "";
+  }
+}
+
+function abrirAlerta(titulo, descricao, onVoltarDashboard = false) {
+  const modal = document.querySelector(".modal");
+  if (!modal) return;
+  modal.classList.add("is-active");
+  const buttonHtml = onVoltarDashboard 
+    ? `<button onclick="window.location.href='../dashboards/dashboardnutricionista.html'">OK</button>`
+    : `<button onclick="fecharModal()">Fechar</button>`;
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>${buttonHtml}</div>
+    </div>
+  `;
+}
+
 async function cadastrarConsulta(e) {
   e.preventDefault();
 
@@ -50,16 +74,15 @@ async function cadastrarConsulta(e) {
 
     const response = await req.json();
     if (response.erro) {
-      return alert(response.erro);
+      return abrirAlerta("Erro", response.erro);
     }
 
     if (response.sucesso) {
-      alert(response.sucesso);
-      window.location.href = "../dashboards/dashboardnutricionista.html";
+      abrirAlerta("Sucesso", response.sucesso, true);
     }
   } catch (error) {
     console.log(error);
-    alert("Erro ao cadastrar consulta");
+    abrirAlerta("Erro", "Erro ao cadastrar consulta");
   }
 }
 

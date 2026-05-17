@@ -98,7 +98,8 @@ async function carregarTreinos(id, card) {
   listaTreinos.innerHTML = `<p class="cards-div-message">Carregando treinos...</p>`;
 
   try {
-    const responseTreinos = await fetch(`http://localhost:3000/treino?id=` + id, {
+    const responseTreinos = await fetch(`http://localhost:3000/treino?id=${id}`, {
+      method: "GET",
       credentials: "include"
     });
     const dataTreinos = await responseTreinos.json();
@@ -109,7 +110,7 @@ async function carregarTreinos(id, card) {
     }
 
     const treinos = Array.isArray(dataTreinos.sucesso) ? dataTreinos.sucesso : [];
-    
+
     listaTreinos.innerHTML = `
       <a class="card-botoes" href="../treino/index.html?id_cliente=${id}">Criar Treino</a>
     `;
@@ -119,13 +120,13 @@ async function carregarTreinos(id, card) {
       return;
     }
 
-    listaTreinos.innerHTML += treinos.map((treino) => `
+    listaTreinos.innerHTML += treinos.map((t) => `
     <div class="card-cliente card-dieta">
       <div class="card-content">
-        <div class="card-texto"><span>Título:</span> ${treino.titulo_treino}</div>
+        <div class="card-texto"><span>Título:</span> ${t.nome_treino}</div>
         <div class="card-botoes-container dieta-acoes">
-          <div class="card-botoes" data-treino-id="${treino.id_treino}" onclick="excluirTreino(${treino.id_treino}, ${id})">Excluir Treino</div>
-          <a class="card-botoes" data-treino-id="${treino.id_treino}" href="../treino/index.html?id_treino=${treino.id_treino}">Atualizar Treino</a>
+          <div class="card-botoes" data-treino-id="${t.id_treino}" onclick="excluirTreino(${t.id_treino}, ${id})">Excluir Treino</div>
+          <a class="card-botoes" data-treino-id="${t.id_treino}" href="../treino/index.html?id_treino=${t.id_treino}">Atualizar Treino</a>
         </div>
       </div>
     </div>
@@ -162,20 +163,39 @@ async function verDados(id) {
   }
 }
 
-async function excluirTreino(treinoId, clienteId) {
+function excluirTreino(treinoId, clienteId) {
   const card = document.getElementById(clienteId);
-  try {
-    const response = await fetch("http://localhost:3000/treino/" + treinoId, {
-      method: "DELETE",
-      credentials: "include"
-    });
-    const data = await response.json();
-    if (!data.sucesso) return;
-    await carregarTreinos(clienteId, card);
-    alert(data.sucesso);
-  } catch (error) {
-    alert("Erro ao deletar treino");
-  }
+  abrirModal("Deletar Treino", "Tem certeza que deseja deletar esse treino?");
+  const aceitarBtn = document.getElementById("modalAcceptBtn");
+  if (!aceitarBtn) return;
+  aceitarBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/treino/" + treinoId, {
+        method: "DELETE",
+        credentials: "include"
+      });
+      const data = await response.json();
+      if (!data.sucesso) return;
+      await carregarTreinos(clienteId, card);
+      fecharModal();
+    } catch (error) {
+      fecharModal();
+      abrirAlerta("Erro", "Erro ao deletar treino");
+    }
+  });
+}
+function abrirAlerta(titulo, descricao) {
+  document.querySelector(".modal").classList.add("is-active");
+  document.querySelector(".modal").innerHTML = `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button onclick="fecharModal()">Fechar</button>
+      </div>
+    </div>
+	`;
 }
 
 function fecharModal() {

@@ -1,6 +1,8 @@
+DROP DATABASE IF EXISTS hubsenior;
 CREATE DATABASE hubsenior;
 USE hubsenior;
 
+-- 1. TABELA NUTRICIONISTAS
 CREATE TABLE nutricionistas (
     id_nutricionista INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -13,71 +15,7 @@ CREATE TABLE nutricionistas (
     codigo VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE clientes (
-    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
-    id_nutricionista INT,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    senha VARCHAR(255) NOT NULL,
-    data_nascimento DATE,
-    endereco VARCHAR(100),
-    objetivo VARCHAR(255),
-    codigo_nutricionista VARCHAR(255),
-    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
-);
-
-CREATE TABLE consultas (
-    id_consulta INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
-    id_nutricionista INT,
-    data_consulta DATETIME NOT NULL, 
-    peso_atual DECIMAL(5,2),
-    altura DECIMAL(3,2),
-    alergias TEXT,
-    restricoes_alimentares TEXT,
-    historico_familiar TEXT,
-    observacoes TEXT,
-    metodos_utilizados VARCHAR(50),
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
-);
-
-CREATE TABLE resultados_exames (
-    id_exame INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
-    id_nutricionista INT NOT NULL,
-    data_realizacao DATE NOT NULL,
-    percentual_gordura DECIMAL(4,2),
-    massa_magra DECIMAL(5,2),
-    gordura_visceral DECIMAL(5,2),
-    taxa_metabolica_basal DECIMAL(10,2),
-    colesterol_total DECIMAL(10,2),
-    glicemia_jejum DECIMAL(10,2),
-    outros_marcadores TEXT,
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista)
-);
-
-CREATE TABLE dietas (
-    id_dieta INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
-    id_nutricionista INT,
-    data_inicio DATE NOT NULL,
-    data_fim DATE,
-    titulo_dieta VARCHAR(100),
-    objetivos TEXT,
-    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
-);
-
-CREATE TABLE refeicoes (
-    id_refeicao INT AUTO_INCREMENT PRIMARY KEY,
-    id_dieta INT NOT NULL,
-    nome_refeicao VARCHAR(100) NOT NULL,
-    horario TIME,
-    FOREIGN KEY (id_dieta) REFERENCES dietas(id_dieta) ON DELETE CASCADE
-);
-
+-- 2. TABELA PERSONAIS
 CREATE TABLE personais (
     id_personal INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -90,7 +28,100 @@ CREATE TABLE personais (
     codigo VARCHAR(255) UNIQUE NOT NULL
 );
 
-SELECT * FROM clientes;
-SELECT * FROM refeicoes;
-SELECT * FROM dietas;
-SELECT * FROM nutricionistas;
+-- 3. TABELA CLIENTES
+CREATE TABLE clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    id_nutricionista INT,
+    id_personal INT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    data_nascimento DATE,
+    endereco VARCHAR(100),
+    objetivo VARCHAR(255),
+    codigo_nutricionista VARCHAR(255),
+    codigo_personal VARCHAR(255),
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL,
+    FOREIGN KEY (id_personal) REFERENCES personais(id_personal) ON DELETE SET NULL
+);
+
+-- 4. TABELA CONSULTAS
+CREATE TABLE consultas (
+    id_consulta INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT,
+    data_consulta DATETIME NOT NULL, 
+    peso_atual DECIMAL(5,2),
+    altura DECIMAL(3,2),
+    alergias TEXT,
+    restricoes_alimentares TEXT,
+    historico_familiar TEXT,
+    observacoes TEXT,
+    metodos_utilizados VARCHAR(50),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
+);
+
+-- 5. TABELA RESULTADOS EXAMES
+CREATE TABLE resultados_exames (
+    id_exame INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT NOT NULL,
+    data_realizacao DATE NOT NULL,
+    percentual_gordura DECIMAL(4,2),
+    massa_magra DECIMAL(5,2),
+    gordura_visceral DECIMAL(5,2),
+    taxa_metabolica_basal DECIMAL(10,2),
+    colesterol_total DECIMAL(10,2),
+    glicemia_jejum DECIMAL(10,2),
+    outros_marcadores TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista)
+);
+
+-- 6. TABELA DIETAS
+CREATE TABLE dietas (
+    id_dieta INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_nutricionista INT,
+    data_inicio DATE NOT NULL,
+    data_fim DATE,
+    titulo_dieta VARCHAR(100),
+    objetivos TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL
+);
+
+-- 7. TABELA REFEICOES
+CREATE TABLE refeicoes (
+    id_refeicao INT AUTO_INCREMENT PRIMARY KEY,
+    id_dieta INT NOT NULL,
+    nome_refeicao VARCHAR(100) NOT NULL,
+    horario TIME,
+    FOREIGN KEY (id_dieta) REFERENCES dietas(id_dieta) ON DELETE CASCADE
+);
+
+-- 8. TABELA TREINOS (Movida para cima para poder ser referenciada)
+CREATE TABLE treinos (
+    id_treino INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    id_personal INT,
+    nome_treino VARCHAR(50) NOT NULL,
+    dia_semana VARCHAR(25),
+    objetivos TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_personal) REFERENCES personais(id_personal) ON DELETE SET NULL
+);
+
+-- 9. TABELA EXERCICIOS
+CREATE TABLE exercicios (
+    id_exercicio INT PRIMARY KEY AUTO_INCREMENT,
+    id_treino INT NOT NULL,
+    nome_exercicio VARCHAR(100) NOT NULL,
+    grupo_muscular VARCHAR(50) NOT NULL,
+    tempo_descanso INT NOT NULL,
+    repeticoes INT NOT NULL,
+    carga DECIMAL(5,2) NOT NULL,
+    link_video TEXT NOT NULL,
+    FOREIGN KEY (id_treino) REFERENCES treinos(id_treino) ON DELETE CASCADE
+);

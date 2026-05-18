@@ -17,27 +17,45 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   const data = await response.json();
 
+  const currentPage = window.location.href.replace(/\/$/, "");
+
   if (data.erro) {
     const responseRefresh = await fetch("http://localhost:3000/auth/refresh", {
       method: "POST",
       credentials: "include",
     });
     const dataRefresh = await responseRefresh.json();
-    if (dataRefresh.erro) return (window.location.href = "../home/index.html");
+    if (dataRefresh.erro) {
+      if (!currentPage.includes("home/index.html") && !currentPage.includes("login/index.html") && !currentPage.includes("registro/")) {
+        window.location.href = "http://localhost:3000/pages/home/index.html";
+      }
+      return;
+    }
     window.location.reload();
     return;
   }
 
   const dados = data.sucesso;
-  if (!dados?.role) return (window.location.href = "../home/index.html");
+  if (!dados?.role) {
+    if (!currentPage.includes("home/index.html") && !currentPage.includes("login/index.html") && !currentPage.includes("registro/")) {
+      window.location.href = "http://localhost:3000/pages/home/index.html";
+    }
+    return;
+  }
 
-  const currentPage = window.location.href.replace(/\/$/, "");
   const userRole = dados.role;
+
+  // Se já estiver logado e tentar acessar home, login ou registro, redireciona pro dashboard
+  if (currentPage.includes("home/index.html") || currentPage.includes("login/index.html") || currentPage.includes("registro/")) {
+    window.location.href = roleDashboard[userRole] ?? "http://localhost:3000/pages/home/index.html";
+    return;
+  }
+
   const allowedPages = (rolePages[userRole] ?? []).map(p => p.replace(/\/$/, ""));
 
   const isAllowed = allowedPages.some(p => currentPage.includes(p) || p.includes(currentPage));
   
   if (!isAllowed) {
-    window.location.href = roleDashboard[userRole] ?? "../home/index.html";
+    window.location.href = roleDashboard[userRole] ?? "http://localhost:3000/pages/home/index.html";
   }
 });

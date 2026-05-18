@@ -231,6 +231,7 @@ async function logout() {
             if (dataRefresh.erro) return window.location.href = "../home/index.html";
         }
     };
+    window.location.href = "../home/index.html";
 }
 async function excluirConta() {
     try {
@@ -250,7 +251,7 @@ async function excluirConta() {
             });
             const reqData = await req.json();
             if (reqData.erro) return console.log(reqData.erro);
-            window.location.href = "../home/index.html";
+            logout();
         }
     } catch (error) {
         console.log(error);

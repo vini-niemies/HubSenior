@@ -121,6 +121,7 @@ CREATE TABLE exercicios (
     grupo_muscular VARCHAR(50) NOT NULL,
     tempo_descanso INT NOT NULL,
     repeticoes INT NOT NULL,
+    series INT NOT NULL,
     carga DECIMAL(5,2) NOT NULL,
     link_video TEXT NOT NULL,
     FOREIGN KEY (id_treino) REFERENCES treinos(id_treino) ON DELETE CASCADE

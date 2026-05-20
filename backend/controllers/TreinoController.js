@@ -18,7 +18,7 @@ class TreinoController {
 
       for (const treino of treinosRows) {
         const [exRows] = await conn.promise().execute(
-            "SELECT id_exercicio, id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, carga, link_video FROM exercicios WHERE id_treino = ?",
+            "SELECT id_exercicio, id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, series, carga, link_video FROM exercicios WHERE id_treino = ?",
             [treino.id_treino]
           );
 
@@ -29,6 +29,7 @@ class TreinoController {
           grupo_muscular: ex.grupo_muscular,
           tempo_descanso: ex.tempo_descanso,
           repeticoes: ex.repeticoes,
+          series: ex.series,
           carga: ex.carga,
           link_video: ex.link_video,
         }));
@@ -64,7 +65,7 @@ class TreinoController {
 
       for (const treino of treinosRows) {
         const [exRows] = await conn.promise().execute(
-            "SELECT id_exercicio, id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, carga, link_video FROM exercicios WHERE id_treino = ?",
+            "SELECT id_exercicio, id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, series, carga, link_video FROM exercicios WHERE id_treino = ?",
             [treino.id_treino]
           );
 
@@ -75,6 +76,7 @@ class TreinoController {
           grupo_muscular: ex.grupo_muscular,
           tempo_descanso: ex.tempo_descanso,
           repeticoes: ex.repeticoes,
+          series: ex.series,
           carga: ex.carga,
           link_video: ex.link_video,
         }));
@@ -90,7 +92,7 @@ class TreinoController {
   async CriarTreino(req, res) {
     try {
       if (req.user.role !== "personal") {
-        return res.status(403).json({ erro: "Apenas personal trainers podem cadastrar treinos" });
+        return res.status(403).json({ erro: "Apenas personal trainers podem cadastrar treinos!" });
       }
 
       const { id_cliente, nome_treino, dia_semana, objetivos, exercicios } = req.body;
@@ -102,13 +104,14 @@ class TreinoController {
       for (const exercicio of exercicios) {
         const tempoDescanso = Number.parseInt(exercicio.tempo_descanso, 10);
         const repeticoes = Number.parseInt(exercicio.repeticoes, 10);
+        const series = Number.parseInt(exercicio.series, 10);
         const carga = Number.parseFloat(exercicio.carga);
-        if (!exercicio.nome || !exercicio.grupo_muscular || !tempoDescanso || !repeticoes || !carga) {
-          return res.status(400).json({ erro: "Cada exercicio deve conter nome, grupo muscular, tempo de descanso, repeticoes e carga" });
+        if (!exercicio.nome || !exercicio.grupo_muscular || !tempoDescanso || !repeticoes || !series || !carga) {
+          return res.status(400).json({ erro: "Cada exercício deve conter nome, grupo muscular, tempo de descanso, repeticoes, séries e carga" });
         }
 
-        if (!Number.isFinite(tempoDescanso) || !Number.isFinite(repeticoes) || !Number.isFinite(carga)) {
-          return res.status(400).json({ erro: "Tempo de descanso, repeticoes e carga devem ser numeros validos" });
+        if (!Number.isFinite(tempoDescanso) || !Number.isFinite(repeticoes) || !Number.isFinite(series) || !Number.isFinite(carga)) {
+          return res.status(400).json({ erro: "Tempo de descanso, repetições, séries e carga devem conter valores válidos" });
         }
       }
 
@@ -139,15 +142,16 @@ class TreinoController {
           exercicio.grupo_muscular,
           Number.parseInt(exercicio.tempo_descanso, 10),
           Number.parseInt(exercicio.repeticoes, 10),
+          Number.parseInt(exercicio.series, 10),
           Number.parseFloat(exercicio.carga),
           exercicio.link_video
         ]);
 
-        const parametros = exerciciosValues.map(() => "(?, ?, ?, ?, ?, ?, ?)").join(", ");
+        const parametros = exerciciosValues.map(() => "(?, ?, ?, ?, ?, ?, ?, ?)").join(", ");
         const valores = exerciciosValues.flat();
 
         await conn.promise().execute(
-          `INSERT INTO exercicios (id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, carga, link_video) VALUES ${parametros}`,
+          `INSERT INTO exercicios (id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, series, carga, link_video) VALUES ${parametros}`,
           valores
         );
 
@@ -165,7 +169,7 @@ class TreinoController {
   async AtualizarTreino(req, res) {
     try {
       if (req.user.role !== "personal") {
-        return res.status(403).json({ erro: "Apenas personal trainers podem atualizar treinos" });
+        return res.status(403).json({ erro: "Apenas personal trainers podem atualizar treinos!" });
       }
 
       const { id_treino, nome_treino, dia_semana, objetivos, exercicios } = req.body;
@@ -187,10 +191,11 @@ class TreinoController {
       for (const exercicio of exercicios) {
         const tempoDescanso = Number.parseInt(exercicio.tempo_descanso, 10);
         const repeticoes = Number.parseInt(exercicio.repeticoes, 10);
+        const series = Number.parseInt(exercicio.series, 10);
         const carga = Number.parseFloat(exercicio.carga);
 
-        if (!exercicio.nome || !exercicio.grupo_muscular || isNaN(tempoDescanso) || isNaN(repeticoes) || isNaN(carga)) {
-          return res.status(400).json({ erro: "Cada exercicio deve conter nome, grupo muscular, tempo de descanso, repeticoes e carga validos" });
+        if (!exercicio.nome || !exercicio.grupo_muscular || isNaN(tempoDescanso) || isNaN(repeticoes) || isNaN(series) || isNaN(carga)) {
+          return res.status(400).json({ erro: "Cada exercicio deve conter nome, grupo muscular, tempo de descanso, repeticoes, series e carga validos" });
         }
       }
 
@@ -210,20 +215,21 @@ class TreinoController {
           exercicio.grupo_muscular,
           Number.parseInt(exercicio.tempo_descanso, 10),
           Number.parseInt(exercicio.repeticoes, 10),
+          Number.parseInt(exercicio.series, 10),
           Number.parseFloat(exercicio.carga),
           exercicio.link_video || null
         ]);
 
-        const parametros = exerciciosValues.map(() => "(?, ?, ?, ?, ?, ?, ?)").join(", ");
+        const parametros = exerciciosValues.map(() => "(?, ?, ?, ?, ?, ?, ?, ?)").join(", ");
         const valores = exerciciosValues.flat();
 
         await conn.promise().execute(
-          `INSERT INTO exercicios (id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, carga, link_video) VALUES ${parametros}`,
+          `INSERT INTO exercicios (id_treino, nome_exercicio, grupo_muscular, tempo_descanso, repeticoes, series, carga, link_video) VALUES ${parametros}`,
           valores
         );
 
         await conn.promise().commit();
-        return res.status(200).json({ sucesso: "Treino atualizado com sucesso" });
+        return res.status(200).json({ sucesso: "Treino atualizado com sucesso!" });
       } catch (error) {
         await conn.promise().rollback();
         throw error;
@@ -236,7 +242,7 @@ class TreinoController {
   async DeletarTreino(req, res) {
     try {
       if (req.user.role !== "personal") {
-        return res.status(403).json({ erro: "Apenas personal trainers podem deletar treinos" });
+        return res.status(403).json({ erro: "Apenas personal trainers podem deletar treinos!" });
       }
 
       const { id } = req.params;
@@ -256,7 +262,7 @@ class TreinoController {
       try {
         await conn.promise().execute("DELETE FROM treinos WHERE id_treino = ?", [id]);
         await conn.promise().commit();
-        return res.status(200).json({ sucesso: "Treino deletado com sucesso" });
+        return res.status(200).json({ sucesso: "Treino deletado com sucesso!" });
       } catch (error) {
         await conn.promise().rollback();
         throw error;

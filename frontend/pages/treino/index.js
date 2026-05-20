@@ -58,6 +58,7 @@ async function carregarTreino() {
                 const grupoEl = item.querySelector('.grupo');
                 const descansoEl = item.querySelector('.descanso');
                 const repeticoesEl = item.querySelector('.repeticoes');
+                const seriesEl = item.querySelector('.series');
                 const cargaEl = item.querySelector('.carga');
                 const videoLinkEl = item.querySelector('.video-link');
                 if (!checkbox) return;
@@ -77,6 +78,7 @@ async function carregarTreino() {
                     if (grupoEl) grupoEl.value = match.grupo_muscular || match.grupo || "";
                     if (descansoEl) descansoEl.value = match.tempo_descanso || "";
                     if (repeticoesEl) repeticoesEl.value = match.repeticoes || "";
+                    if (seriesEl) seriesEl.value = match.series || "";
                     if (cargaEl) cargaEl.value = match.carga || "";
                     if (videoLinkEl) {
                         if (match.link_video) {
@@ -92,6 +94,7 @@ async function carregarTreino() {
                     if (grupoEl) grupoEl.value = "";
                     if (descansoEl) descansoEl.value = "";
                     if (repeticoesEl) repeticoesEl.value = "";
+                    if (seriesEl) seriesEl.value = "";
                     if (cargaEl) cargaEl.value = "";
                     if (videoLinkEl) {
                         videoLinkEl.href = videoLinkEl.dataset.defaultHref || "#";
@@ -167,6 +170,7 @@ criarTreinoForm.addEventListener("submit", async (e) => {
         const grupoEl = item.querySelector('.grupo');
         const descansoEl = item.querySelector('.descanso');
         const repeticoesEl = item.querySelector('.repeticoes');
+        const seriesEl = item.querySelector('.series');
         const cargaEl = item.querySelector('.carga');
         const videoLinkEl = item.querySelector('.video-link');
 
@@ -175,6 +179,7 @@ criarTreinoForm.addEventListener("submit", async (e) => {
             grupo_muscular: grupoEl ? grupoEl.value : '',
             tempo_descanso: descansoEl ? descansoEl.value : '',
             repeticoes: repeticoesEl ? repeticoesEl.value : '',
+            series: seriesEl ? seriesEl.value : '',
             carga: cargaEl ? cargaEl.value : '',
             link_video: videoLinkEl ? videoLinkEl.href : ''
         };

@@ -120,7 +120,9 @@ async function carregarTreinos(id, card) {
       return;
     }
 
-    listaTreinos.innerHTML += treinos.map((t) => `
+    const treinosHTML = await Promise.all(treinos.map(async (t) => {
+      const feedbacks = await checkFeedback(t.id_treino);
+      return `
     <div class="card-cliente card-dieta">
       <div class="card-content">
         <div class="card-texto"><span>Título:</span> ${t.nome_treino}</div>
@@ -128,9 +130,12 @@ async function carregarTreinos(id, card) {
           <div class="card-botoes" data-treino-id="${t.id_treino}" onclick="excluirTreino(${t.id_treino}, ${id})">Excluir Treino</div>
           <a class="card-botoes" data-treino-id="${t.id_treino}" href="../treino/index.html?id_treino=${t.id_treino}">Atualizar Treino</a>
         </div>
+        ${feedbacks.length > 0 ? renderizarFeedbacks(feedbacks) : ""}
       </div>
     </div>
-  `).join("");
+  `;
+    }));
+    listaTreinos.innerHTML += treinosHTML.join("");
   } catch (error) {
     console.log("Erro ao buscar treinos:", error);
     listaTreinos.innerHTML = `<p class="cards-div-message">Falha ao carregar treinos</p>`;
@@ -224,3 +229,24 @@ logoutBtn.addEventListener("click", () => {
     await logout();
   }
 });
+
+async function checkFeedback(id) {
+	const URI = `http://localhost:3000/feedback?id_treino=${id}`;
+	const res = await fetch(URI, { credentials: "include" });
+	const data = await res.json();
+	if (data.erro) return [];
+	return data.sucesso;
+}
+
+function renderizarFeedbacks(feedbacks) {
+	return `
+		<ul class="feedbacks-list">
+			${feedbacks.map(f => `
+				<li class="feedback-item">
+					<span class="texto">Feedback: ${f.texto}</span>
+				</li>
+			`).join("")}
+		</ul>
+	`;
+
+}

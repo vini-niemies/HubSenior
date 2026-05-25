@@ -67,9 +67,6 @@ class FeedbackController {
 	}
 	async ListarFeedbacks(req, res) {
 		try {
-			if (req.user.role !== "cliente") {
-				return res.status(403).json({ erro: "Apenas clientes podem consultar feedbacks" });
-			}
 
 			const id_cliente = req.query?.id_cliente || req.user.id;
 			const id_dieta = req.query?.id_dieta || null;

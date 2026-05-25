@@ -170,6 +170,7 @@ async function deletarFeedback(e, id) {
 	if (data && data.sucesso) {
 		const item = e.target.closest('.feedback-item');
 		if (item) item.remove();
+		window.location.reload();
 	}
 	return data;
 }

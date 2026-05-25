@@ -124,7 +124,9 @@ async function carregarDietas(id, card) {
       ${botaoRegistrarConsulta}
       `;
 
-    listaDietas.innerHTML += dietas.map((dieta) => `
+    const dietasHTML = await Promise.all(dietas.map(async (dieta) => {
+      const feedbacks = await checkFeedback(dieta.id_dieta);
+      return `
     <div class="card-cliente card-dieta">
       <div class="card-content">
         <div class="card-texto"><span>Título:</span> ${dieta.titulo_dieta}</div>
@@ -132,9 +134,12 @@ async function carregarDietas(id, card) {
           <div class="card-botoes" data-dieta-id="${dieta.id_dieta}" onclick="excluirDieta(${dieta.id_dieta}, ${id})">Excluir Dieta</div>
           <a class="card-botoes" data-dieta-id="${dieta.id_dieta}" href="../dieta/index.html?id_dieta=${dieta.id_dieta}">Atualizar Dieta</a>
         </div>
+        ${feedbacks.length > 0 ? renderizarFeedbacks(feedbacks) : ""}
       </div>
     </div>
-  `).join("");
+  `;
+    }));
+    listaDietas.innerHTML += dietasHTML.join("");
   } catch (error) {
     console.log("Erro ao buscar dietas:", error);
     listaDietas.innerHTML = `<p class="cards-div-message">Falha ao carregar dietas</p>`;
@@ -221,3 +226,24 @@ logoutBtn.addEventListener("click", () => {
     await logout();
   }
 });
+
+async function checkFeedback(id) {
+	const URI = `http://localhost:3000/feedback?id_dieta=${id}`;
+	const res = await fetch(URI, { credentials: "include" });
+	const data = await res.json();
+	if (data.erro) return [];
+	return data.sucesso;
+}
+
+function renderizarFeedbacks(feedbacks) {
+	return `
+		<ul class="feedbacks-list">
+			${feedbacks.map(f => `
+				<li class="feedback-item">
+					<span class="texto">Feedback: ${f.texto}</span>
+				</li>
+			`).join("")}
+		</ul>
+	`;
+
+}

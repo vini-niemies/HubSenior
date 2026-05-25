@@ -126,3 +126,12 @@ CREATE TABLE exercicios (
     link_video TEXT NOT NULL,
     FOREIGN KEY (id_treino) REFERENCES treinos(id_treino) ON DELETE CASCADE
 );
+
+CREATE TABLE feedback (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    id_dieta INT,
+    id_treino INT,
+    texto TEXT,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
+);

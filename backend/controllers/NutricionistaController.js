@@ -72,10 +72,10 @@ class NutricionistaController {
   async AtualizarNutricionista(req, res) {
     try {
       const id = req.user.id;
-      const { nome, email, telefone, instagram, endereco } = req.body;
+      const { nome, email, senha, telefone, instagram, endereco } = req.body;
 
       if (!nome || !email || !telefone || !instagram || !endereco) {
-        return res.status(400).json({ erro: "Campos obrigatorios faltando: nome, email, telefone, instagram, endereco" });
+        return res.status(400).json({ erro: "Campos obrigatorios faltando" });
       }
 
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -94,11 +94,17 @@ class NutricionistaController {
           if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });
         }
       }
+      let sql = "UPDATE nutricionistas SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_nutricionista = ?";
+      let params = [nome, email, telefone, instagram, endereco, id];
 
-      const [results] = await conn.promise().execute(
-        "UPDATE nutricionistas SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_nutricionista = ?",
-        [nome, email, telefone, instagram, endereco, id]
-      );
+      if (senha) {
+        const salt = 12;
+        const senhaCriptografada = await bcrypt.hash(senha, salt);
+        sql = "UPDATE nutricionistas SET nome = ?, email = ?, senha = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_nutricionista = ?";
+        params = [nome, email, senhaCriptografada, telefone, instagram, endereco, id];
+      }
+
+      const [results] = await conn.promise().execute(sql, params);
       if (results.affectedRows === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
       return res.status(200).json({ sucesso: "Dados atualizados com sucesso" });
     } catch (error) {

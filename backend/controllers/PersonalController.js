@@ -70,10 +70,10 @@ class PersonalController {
     async AtualizarPersonal(req, res) {
         try {
             const id = req.user.id;
-            const { nome, email, telefone, instagram, endereco } = req.body;
+            const { nome, email, senha, telefone, instagram, endereco } = req.body;
 
-            if (!nome || !email || !endereco) {
-                return res.status(400).json({ erro: "Campos obrigatorios faltando: Nome, E-mail ou Endereço" });
+            if (!nome || !email || !endereco || !telefone || !instagram) {
+                return res.status(400).json({ erro: "Campos obrigatorios" });
             }
 
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -92,11 +92,17 @@ class PersonalController {
                     if (emailsCadastrados.includes(email)) return res.status(409).json({ erro: "E-mail já está cadastrado" });
                 }
             }
+            let sql = "UPDATE personais SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_personal = ?";
+            let params = [nome, email, telefone, instagram, endereco, id];
 
-            const [results] = await conn.promise().execute(
-                "UPDATE personais SET nome = ?, email = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_personal = ?",
-                [nome, email, telefone, instagram, endereco, id]
-            );
+            if (senha) {
+                const salt = 12;
+                const senhaCriptografada = await bcrypt.hash(senha, salt);
+                sql = "UPDATE personais SET nome = ?, email = ?, senha = ?, telefone = ?, instagram = ?, endereco = ? WHERE id_personal = ?";
+                params = [nome, email, senhaCriptografada, telefone, instagram, endereco, id];
+            }
+
+            const [results] = await conn.promise().execute(sql, params);
 
             if (results.affectedRows === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
             return res.status(200).json({ sucesso: "Dados atualizados com sucesso" });

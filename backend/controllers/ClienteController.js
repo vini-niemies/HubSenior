@@ -186,7 +186,7 @@ class ClienteController {
   async AtualizarCliente(req, res) {
     try {
       const id = req.user.id;
-      const { nome, email, data_nascimento, endereco, objetivo } = req.body;
+      const { nome, email, senha, data_nascimento, endereco, objetivo } = req.body;
 
       if (!nome || !email || !data_nascimento || !endereco || !objetivo) {
         return res.status(400).json({ erro: "Todos os campos devem estar preenchidos" });
@@ -220,11 +220,17 @@ class ClienteController {
       if (dataCliente > dataCheck) {
         return res.status(400).json({ erro: "Usuário deve ser maior de 18" });
       }
+      let sql = "UPDATE clientes SET nome = ?, email = ?, data_nascimento = ?, endereco = ?, objetivo = ? WHERE id_cliente = ?";
+      let params = [nome, email, data_nascimento, endereco, objetivo, id];
 
-      const [results] = await conn.promise().execute(
-        "UPDATE clientes SET nome = ?, email = ?, data_nascimento = ?, endereco = ?, objetivo = ? WHERE id_cliente = ?",
-        [nome, email, data_nascimento, endereco, objetivo, id]
-      );
+      if (senha) {
+        const salt = 12;
+        const senhaCriptografada = await bcrypt.hash(senha, salt);
+        sql = "UPDATE clientes SET nome = ?, email = ?, senha = ?, data_nascimento = ?, endereco = ?, objetivo = ? WHERE id_cliente = ?";
+        params = [nome, email, senhaCriptografada, data_nascimento, endereco, objetivo, id];
+      }
+
+      const [results] = await conn.promise().execute(sql, params);
       if (results.affectedRows === 0) return res.status(404).json({ erro: "Usuário não encontrado" });
       return res.status(200).json({ sucesso: "Dados atualizados com sucesso" });
     } catch (error) {

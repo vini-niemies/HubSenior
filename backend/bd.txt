@@ -8,11 +8,11 @@ CREATE TABLE nutricionistas (
     nome VARCHAR(100) NOT NULL,
     crn VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    senha VARCHAR(255) NOT NULL,
+    senha TEXT NOT NULL,
     telefone VARCHAR(20),
     instagram VARCHAR(20),
     endereco VARCHAR(100),
-    codigo VARCHAR(255) UNIQUE NOT NULL
+    codigo TEXT UNIQUE NOT NULL
 );
 
 -- 2. TABELA PERSONAIS
@@ -21,11 +21,11 @@ CREATE TABLE personais (
     nome VARCHAR(100) NOT NULL,
     cref VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    senha VARCHAR(255) NOT NULL,
+    senha TEXT NOT NULL,
     telefone VARCHAR(20),
     instagram VARCHAR(20),
     endereco VARCHAR(100),
-    codigo VARCHAR(255) UNIQUE NOT NULL
+    codigo TEXT UNIQUE NOT NULL
 );
 
 -- 3. TABELA CLIENTES
@@ -35,12 +35,12 @@ CREATE TABLE clientes (
     id_personal INT,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    senha VARCHAR(255) NOT NULL,
+    senha TEXT NOT NULL,
     data_nascimento DATE,
     endereco VARCHAR(100),
     objetivo VARCHAR(255),
-    codigo_nutricionista VARCHAR(255),
-    codigo_personal VARCHAR(255),
+    codigo_nutricionista TEXT,
+    codigo_personal TEXT,
     FOREIGN KEY (id_nutricionista) REFERENCES nutricionistas(id_nutricionista) ON DELETE SET NULL,
     FOREIGN KEY (id_personal) REFERENCES personais(id_personal) ON DELETE SET NULL
 );

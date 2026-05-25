@@ -23,6 +23,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
 
                     <div class="input-box">
+                        <input type="password" id="senhaNutriInput" name="senha" value="">
+                        <label>Senha</label>
+                    </div>
+
+                    <div class="input-box">
                         <input type="text" id="telefoneNutriInput" name="telefone" required value="${dados.telefone}">
                         <label>Telefone</label>
                     </div>
@@ -59,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const payload = {
                 nome: document.getElementById("nomeNutriInput").value,
                 email: document.getElementById("emailNutriInput").value,
+                senha: document.getElementById("senhaNutriInput").value,
                 telefone: document.getElementById("telefoneNutriInput").value,
                 instagram: document.getElementById("instagramNutriInput").value,
                 endereco: document.getElementById("enderecoNutriInput").value
@@ -86,6 +92,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="input-box">
                         <input type="email" id="emailInput" name="email" required value="${dados.email}">
                         <label>E-mail</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="password" id="senhaInput" name="senha" value="">
+                        <label>Senha</label>
                     </div>
 
                     <div class="input-box">
@@ -123,6 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const payload = {
                 nome: document.getElementById("nomeInput").value,
                 email: document.getElementById("emailInput").value,
+                senha: document.getElementById("senhaInput").value,
                 data_nascimento: document.getElementById("dataNascimentoInput").value,
                 endereco: document.getElementById("enderecoInput").value,
                 objetivo: document.getElementById("objetivoInput").value
@@ -149,6 +161,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="input-box">
                         <input type="email" id="emailInput" name="email" required value="${dados.email}">
                         <label>E-mail</label>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="password" id="senhaInput" name="senha" value="">
+                        <label>Senha</label>
                     </div>
 
                     <div class="input-box">
@@ -186,6 +203,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const payload = {
                 nome: document.getElementById("nomeInput").value,
                 email: document.getElementById("emailInput").value,
+                senha: document.getElementById("senhaInput").value,
                 telefone: document.getElementById("telefoneInput").value,
                 instagram: document.getElementById("instagramInput").value,
                 endereco: document.getElementById("enderecoInput").value

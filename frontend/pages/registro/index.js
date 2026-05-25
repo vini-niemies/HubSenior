@@ -61,7 +61,6 @@ async function criarNutricionista(e) {
     }
   });
   const data = await response.json();
-  console.log(data)
   if (data.erro) return mensagemErroCampo.textContent = data.erro;
   if (data.sucesso) return window.location.href = "../login/index.html";
 }

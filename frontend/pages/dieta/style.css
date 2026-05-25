@@ -3,7 +3,7 @@
   padding: 2rem 1rem;
 }
 
-.container > .login-box {
+.container>.login-box {
   width: 95%;
   max-width: 760px;
   min-height: 0;
@@ -14,15 +14,15 @@
   border-bottom-right-radius: 4px;
 }
 
-.container > .login-box:hover {
+.container>.login-box:hover {
   transform: translateY(0);
 }
 
-.container > .login-box::-webkit-scrollbar {
+.container>.login-box::-webkit-scrollbar {
   width: 8px;
 }
 
-.container > .login-box::-webkit-scrollbar-thumb {
+.container>.login-box::-webkit-scrollbar-thumb {
   background: rgba(242, 113, 33, 0.6);
   border-radius: 20px;
 }
@@ -35,6 +35,16 @@
   width: 100%;
   margin-bottom: 0.2rem;
   font-size: 2rem;
+}
+
+.logo-correction {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.brand-hub {
+  color: #fff;
 }
 
 .title-top button {
@@ -127,7 +137,7 @@ form.login-box {
     padding: 1rem 0.6rem;
   }
 
-  .container > .login-box {
+  .container>.login-box {
     max-height: calc(100vh - 2rem);
     padding: 1rem;
   }

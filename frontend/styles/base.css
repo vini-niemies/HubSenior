@@ -173,3 +173,77 @@ select option {
   color: #F27121;
   transform: scale(1.2);
 }
+
+/* Feedback list styles */
+.feedbacks-list {
+  list-style: none;
+  margin-top: 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(242,113,33,0.10);
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #F9F9F9;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.feedback-item .texto {
+  flex: 1 1 auto;
+  margin-right: 8px;
+  color: #e6eefc;
+}
+
+.feedback-item button {
+  background: transparent;
+  border: none;
+  color: rgba(242,113,33,0.95);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 120ms ease, transform 90ms ease, color 120ms ease;
+}
+
+.feedback-item button:hover {
+  background: rgba(242,113,33,0.08);
+  transform: scale(1.05);
+  color: #F27121;
+}
+
+.form-feedback {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.feedbackInput {
+  flex: 1 1 auto;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: #fff;
+  outline: none;
+}
+
+.form-feedback button[type="submit"] {
+  background: #F27121;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.form-feedback button[type="submit"]:hover {
+  filter: brightness(0.96);
+}

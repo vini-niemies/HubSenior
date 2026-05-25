@@ -71,17 +71,39 @@ class FeedbackController {
 				return res.status(403).json({ erro: "Apenas clientes podem consultar feedbacks" });
 			}
 
-			const id_cliente = req.user.id;
+			const id_cliente = req.query?.id_cliente || req.user.id;
+			const id_dieta = req.query?.id_dieta || null;
+			const id_treino = req.query?.id_treino || null;
 
-			const [rows] = await conn.promise().execute(
-				`SELECT f.id, f.id_cliente, f.id_dieta, f.id_treino, f.texto,
-								d.titulo_dieta, t.nome_treino
+			if (!id_cliente) {
+				return res.status(400).json({ erro: "id_cliente é obrigatório" });
+			}
+
+			if (id_dieta && id_treino) {
+				return res.status(400).json({ erro: "Informe apenas id_dieta ou id_treino" });
+			}
+
+			let query =
+				`SELECT f.id_feedback, f.id_cliente, f.id_dieta, f.id_treino, f.texto,
+						d.titulo_dieta, t.nome_treino
 				 FROM feedback f
 				 LEFT JOIN dietas d ON f.id_dieta = d.id_dieta
 				 LEFT JOIN treinos t ON f.id_treino = t.id_treino
-				 WHERE f.id_cliente = ?
-				 ORDER BY f.id DESC`,
-				[id_cliente]
+				 WHERE f.id_cliente = ?`;
+
+			const params = [id_cliente];
+
+			if (id_dieta) {
+				query += " AND f.id_dieta = ?";
+				params.push(id_dieta);
+			} else if (id_treino) {
+				query += " AND f.id_treino = ?";
+				params.push(id_treino);
+			}
+
+			const [rows] = await conn.promise().execute(
+				`${query} ORDER BY f.id_feedback DESC`,
+				params
 			);
 
 			return res.status(200).json({ sucesso: rows });
@@ -103,12 +125,12 @@ class FeedbackController {
 			}
 
 			const [rows] = await conn.promise().execute(
-				`SELECT f.id, f.id_cliente, f.id_dieta, f.id_treino, f.texto,
+				`SELECT f.id_feedback, f.id_cliente, f.id_dieta, f.id_treino, f.texto,
 								d.titulo_dieta, t.nome_treino
 				 FROM feedback f
 				 LEFT JOIN dietas d ON f.id_dieta = d.id_dieta
 				 LEFT JOIN treinos t ON f.id_treino = t.id_treino
-				 WHERE f.id = ? AND f.id_cliente = ?`,
+				 WHERE f.id_feedback = ? AND f.id_cliente = ?`,
 				[id_feedback, id_cliente]
 			);
 
@@ -136,7 +158,7 @@ class FeedbackController {
 			}
 
 			const [feedbackRows] = await conn.promise().execute(
-				"SELECT * FROM feedback WHERE id = ? AND id_cliente = ?",
+				"SELECT * FROM feedback WHERE id_feedback = ? AND id_cliente = ?",
 				[id_feedback, id_cliente]
 			);
 
@@ -188,7 +210,7 @@ class FeedbackController {
 			}
 
 			const [results] = await conn.promise().execute(
-				"UPDATE feedback SET id_dieta = ?, id_treino = ?, texto = ? WHERE id = ? AND id_cliente = ?",
+				"UPDATE feedback SET id_dieta = ?, id_treino = ?, texto = ? WHERE id_feedback = ? AND id_cliente = ?",
 				[dietaFinal || null, treinoFinal || null, textoAtualizado, id_feedback, id_cliente]
 			);
 
@@ -215,7 +237,7 @@ class FeedbackController {
 			}
 
 			const [feedbackRows] = await conn.promise().execute(
-				"SELECT id FROM feedback WHERE id = ? AND id_cliente = ?",
+				"SELECT id_feedback FROM feedback WHERE id_feedback = ? AND id_cliente = ?",
 				[id_feedback, id_cliente]
 			);
 
@@ -224,7 +246,7 @@ class FeedbackController {
 			}
 
 			const [results] = await conn.promise().execute(
-				"DELETE FROM feedback WHERE id = ? AND id_cliente = ?",
+				"DELETE FROM feedback WHERE id_feedback = ? AND id_cliente = ?",
 				[id_feedback, id_cliente]
 			);
 

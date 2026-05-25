@@ -55,8 +55,9 @@ function renderizarDietas(dietas) {
 		`
 		listaDietas.appendChild(li);
 	}
-	
-	dietas.forEach(d => {
+
+	dietas.forEach(async (d) => {
+		const feedbacks = await checkFeedback(true, d.id_dieta);
 		const li = document.createElement("li");
 		li.className = "dieta-item";
 		li.innerHTML = `
@@ -73,7 +74,11 @@ function renderizarDietas(dietas) {
                     <div class="dieta-item-dieta-hour">Horário: ${formatarHorario(r.horario)}</div>
                 </div>`).join("")}
                 <div class="dieta-item-subtext">Objetivo: ${d.objetivos}</div>
-            </div>
+				${feedbacks.length > 0 ? renderizarFeedbacks(feedbacks) : `<form class="form-feedback" onsubmit="cadastrarFeedback(event, true, ${d.id_dieta})">
+					<input class="feedbackInput" type="text" placeholder="Deixe um feedback" />
+					<button type="submit" aria-label="Enviar feedback">Enviar</button>
+				</form>`}
+				</div>
         `;
 		listaDietas.appendChild(li);
 	});
@@ -95,8 +100,9 @@ function renderizarTreinos(treinos) {
 		`
 		listaTreinos.appendChild(li);
 	}
-	
-	treinos.forEach(t => {
+
+	treinos.forEach(async (t) => {
+		const feedbacks = await checkFeedback(false, t.id_treino);
 		const li = document.createElement("li");
 		li.className = "dieta-item";
 		li.innerHTML = `
@@ -110,15 +116,62 @@ function renderizarTreinos(treinos) {
                 <div class="dieta-item-dieta">
                     <div class="dieta-item-dieta-title">${e.nome}</div>
                     <div class="dieta-item-dieta-hour">Grupo: ${e.grupo_muscular}</div>
+					<div class="dieta-item-text">Séries: ${e.series}</div>
                     <div class="dieta-item-text">Repetições: ${e.repeticoes} | Carga: ${e.carga}kg</div>
                     <div class="dieta-item-text">Descanso: ${e.tempo_descanso}s</div>
                     ${e.link_video ? `<div class="dieta-item-subtext"><a class="treino-video-link" href="${e.link_video}" target="_blank" rel="noopener">Video</a></div>` : ""}
                 </div>`).join("")}
                 <div class="dieta-item-subtext">Objetivo: ${t.objetivos || "Não definido"}</div>
+				${feedbacks.length > 0 ? renderizarFeedbacks(feedbacks): `<form class="form-feedback" onsubmit="cadastrarFeedback(event, false, ${t.id_treino})">
+					<input class="feedbackInput" type="text" placeholder="Deixe um feedback"/>
+					<button type="submit" aria-label="Enviar feedback">Enviar</button>
+				</form>`}
+
             </div>
         `;
 		listaTreinos.appendChild(li);
 	});
+}
+
+
+
+async function cadastrarFeedback(e, isDieta, id) {
+	e.preventDefault();
+
+	const form = e.target;
+	const texto = form.children[0].value;
+
+	const body = {
+		id_treino: isDieta ? null : id,
+		id_dieta: isDieta ? id : null,
+		texto: texto
+	}
+
+	const res = await fetch("http://localhost:3000/feedback", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(body),
+		credentials: "include"
+	});
+	const data = await res.json();
+	if (data.sucesso) {
+		window.location.reload();
+	}
+}
+
+async function deletarFeedback(e, id) {
+	const res = await fetch("http://localhost:3000/feedback/" + id, {
+		method: "DELETE",
+		credentials: "include"
+	});
+	const data = await res.json();
+	if (data && data.sucesso) {
+		const item = e.target.closest('.feedback-item');
+		if (item) item.remove();
+	}
+	return data;
 }
 
 document.querySelector(".dieta-container-list").addEventListener("click", (e) => {
@@ -176,7 +229,7 @@ function renderizarAssociados(associados) {
 
 	const associadosChaves = Object.keys(associados);
 	let hasAssociados = false;
-	
+
 	associadosChaves.forEach(a => {
 		if (associados[a] === null) return;
 		hasAssociados = true;
@@ -203,7 +256,7 @@ async function carregarAssociadosCliente() {
 		method: "GET",
 		credentials: "include"
 	});
-	return await response.json(); 
+	return await response.json();
 }
 
 function fecharModal() {
@@ -223,6 +276,28 @@ function abrirModal(titulo, descricao) {
       </div>
     </div>
 	`
+}
+
+async function checkFeedback(isDieta, id) {
+	const URI = isDieta ? `http://localhost:3000/feedback?id_dieta=${id}` : `http://localhost:3000/feedback?id_treino=${id}`;
+	const res = await fetch(URI, { credentials: "include" });
+	const data = await res.json();
+	if (data.erro) return [];
+	return data.sucesso;
+}
+
+function renderizarFeedbacks(feedbacks) {
+	return `
+		<ul class="feedbacks-list">
+			${feedbacks.map(f => `
+				<li class="feedback-item">
+					<span class="texto">Feedback: ${f.texto} <button type="button" onclick="deletarFeedback(event, ${f.id_feedback})">x</button></span>
+					
+				</li>
+			`).join("")}
+		</ul>
+	`;
+
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

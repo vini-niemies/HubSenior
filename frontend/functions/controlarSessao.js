@@ -8,7 +8,7 @@ const roleDashboard = {
   personal: "http://localhost:3000/pages/dashboards/dashboardpersonal.html",
   nutricionista: "http://localhost:3000/pages/dashboards/dashboardnutricionista.html",
   cliente: "http://localhost:3000/pages/dashboards/dashboardcliente.html",
-};
+};  
 
 document.addEventListener("DOMContentLoaded", async () => {
   const response = await fetch("http://localhost:3000/auth/me", {

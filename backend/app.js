@@ -11,7 +11,7 @@ import dietaRotas from "./routes/DietaRoutes.js";
 import consultaRotas from "./routes/ConsultaRoutes.js";
 import personalRotas from "./routes/PersonalRoutes.js"
 import treinoRotas from "./routes/TreinoRoutes.js";
-import FeedbackRotas from "./models/Feedback.js";
+import feedbackRotas from "./routes/FeedbackRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,7 +33,7 @@ app.use(dietaRotas);
 app.use(consultaRotas);
 app.use(personalRotas);
 app.use(treinoRotas);
-app.use(FeedbackRotas);
+app.use(feedbackRotas);
 
 conn.connect((error) => {
   if (error) console.log("erro" + error);

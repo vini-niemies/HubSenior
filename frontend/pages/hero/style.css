@@ -72,7 +72,7 @@ body {
 }
 
 .brand-senior {
-    color: #ff9800;
+    color: #f27121;
 }
 
 .hero-main {
@@ -85,7 +85,8 @@ body {
     padding: 2rem 3rem 2rem 4rem;
     gap: 0;
 }
- /* parte da esquerda */
+
+/* parte da esquerda */
 .hero-left {
     flex: 0 0 auto;
     max-width: 550px;
@@ -246,22 +247,22 @@ body {
     }
 }
 
-    .hero-title {
-        font-size: 2.5rem;
-    }
+.hero-title {
+    font-size: 2.5rem;
+}
 
-    .hero-left {
-        width: auto;
-        max-width: 480px;
-    }
+.hero-left {
+    width: auto;
+    max-width: 480px;
+}
 
-    .hero-right {
-        max-width: 100%;
-    }
+.hero-right {
+    max-width: 100%;
+}
 
-    .feature-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.feature-cards {
+    grid-template-columns: repeat(2, 1fr);
+}
 
 
 @media (max-width: 768px) {
@@ -307,19 +308,20 @@ body {
     }
 }
 
-    .feature-cards {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
+.feature-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
 
-    .feature-card {
-        flex-direction: row;
-    }
+.feature-card {
+    flex-direction: row;
+}
 
-    .feature-icon {
-        width: 45px;
-        heheader {
+.feature-icon {
+    width: 45px;
+
+    heheader {
         padding: 1rem;
     }
 

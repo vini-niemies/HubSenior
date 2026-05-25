@@ -54,8 +54,9 @@ class NutricionistaController {
 
       const [result] = await conn.promise().execute("INSERT INTO nutricionistas (nome, crn, email, senha, telefone, codigo, instagram, endereco) VALUES (?, ?, ? ,?, ?, ?, ?, ?)", nutri.toArray());
       return res.status(201).json({ sucesso: "Usuario Criado" });
-      
+
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ erro: error });
     }
   }

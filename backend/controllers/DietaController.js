@@ -17,8 +17,21 @@ class DietaController {
         refeicoes
       } = req.body;
 
-      if (!id_cliente || !data_inicio || !titulo_dieta || refeicoes.length < 1) {
+      if (!id_cliente || !data_inicio || !data_fim || !titulo_dieta || refeicoes.length < 1) {
         return res.status(400).json({ erro: "Campos obrigatorios faltando" });
+      }
+
+      const dataAtual = new Date();
+      const dataCheck = dataAtual;
+      dataCheck.setDate(dataAtual.getDate() - 1);
+
+
+      if (new Date(data_inicio) <= dataCheck) {
+        return res.status(400).json({ erro: "Data de início incorreta" });
+      }
+
+      if (new Date(data_fim) < new Date(data_inicio)) {
+        return res.status(400).json({ erro: "Data fim incorreta" });
       }
 
       if (refeicoes.length > 6) return res.status(400).json({ erro: "Limite de refeições (6) ultrapassado" });
@@ -78,6 +91,7 @@ class DietaController {
         throw error;
       }
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ erro: error });
     }
   }
@@ -95,12 +109,12 @@ class DietaController {
 
       const query = role === "nutricionista" ? "SELECT * FROM dietas WHERE id_cliente = ? AND id_nutricionista = ?" :
         "SELECT * FROM dietas WHERE id_cliente = ?";
-      
+
       const queryParam = role === "cliente" ? req.user.id : idCliente;
       const params = role === "nutricionista" ? [queryParam, req.user.id] : [queryParam];
-      
+
       const [dietasRows] = await conn.promise().execute(query, params);
-      
+
       if (dietasRows.length <= 0) {
         return res.status(200).json({ sucesso: [] });
       }
@@ -124,9 +138,9 @@ class DietaController {
 
       const dietasComRefeicoes = dietasRows.map((dieta) => (
         {
-        ...dieta,
-        refeicoes: refeicoesPorDieta[dieta.id_dieta] || []
-      }));
+          ...dieta,
+          refeicoes: refeicoesPorDieta[dieta.id_dieta] || []
+        }));
 
       return res.status(200).json({ sucesso: dietasComRefeicoes });
     } catch (error) {
@@ -144,11 +158,11 @@ class DietaController {
       }
 
       const query = role === "nutricionista" ? "SELECT * FROM dietas WHERE id_dieta = ? AND id_nutricionista = ?"
-      : "SELECT * FROM dietas WHERE id_dieta = ? AND id_cliente = ?";
+        : "SELECT * FROM dietas WHERE id_dieta = ? AND id_cliente = ?";
       const params = [id_dieta, req.user.id];
-      
+
       const [dietasRows] = await conn.promise().execute(query, params);
-      
+
       if (dietasRows.length <= 0) {
         return res.status(404).json({ erro: "Dieta não encontrada" });
       }
@@ -188,8 +202,21 @@ class DietaController {
         return res.status(400).json({ erro: "id da dieta inválido" });
       }
 
-      if (!data_inicio || !titulo_dieta || !Array.isArray(refeicoes) || refeicoes.length < 1) {
+      if (!data_inicio || !data_fim || !titulo_dieta || !Array.isArray(refeicoes) || refeicoes.length < 1) {
         return res.status(400).json({ erro: "Campos obrigatorios faltando" });
+      }
+
+      const dataAtual = new Date();
+      const dataCheck = dataAtual;
+      dataCheck.setDate(dataAtual.getDate() - 1);
+
+
+      if (new Date(data_inicio) <= dataCheck) {
+        return res.status(400).json({ erro: "Data de início incorreta" });
+      }
+
+      if (new Date(data_fim) < new Date(data_inicio)) {
+        return res.status(400).json({ erro: "Data fim incorreta" });
       }
 
       if (refeicoes.length > 6) {

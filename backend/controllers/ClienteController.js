@@ -97,7 +97,7 @@ class ClienteController {
         }
       }
 
-      const query = `INSERT INTO clientes (nome, email, senha, data_nascimento, endereco, objetivo, codigo_nutricionista, codigo_personal, id_nutricionista, id_personal)
+      const query = `INSERT INTO clientes (nome, email, senha, data_nascimento, objetivo, endereco, codigo_nutricionista, codigo_personal, id_nutricionista, id_personal)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       const cliente = new Cliente(

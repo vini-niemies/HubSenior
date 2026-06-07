@@ -25,7 +25,7 @@ function abrirAlerta(titulo, descricao, onVoltarDashboard = false) {
   const modal = document.querySelector(".modal");
   if (!modal) return;
   modal.classList.add("is-active");
-  const buttonHtml = onVoltarDashboard 
+  const buttonHtml = onVoltarDashboard
     ? `<button onclick="window.location.href='../dashboards/dashboardnutricionista.html'">OK</button>`
     : `<button onclick="fecharModal()">Fechar</button>`;
   modal.innerHTML = `
@@ -86,4 +86,30 @@ async function cadastrarConsulta(e) {
   }
 }
 
+const voltar = document.getElementById("voltarBtn");
+
+function abrirModal(titulo, descricao) {
+  document.querySelector(".modal").classList.add("is-active");
+  document.querySelector(".modal").innerHTML += `
+	<div class="modal-content">
+      <h2>${titulo}</h2>
+      <p>${descricao}</p>
+      <div>
+        <button id="modalAcceptBtn">Sim</button>
+        <button onclick=fecharModal()>Não</button>
+      </div>
+    </div>
+	`
+}
+
+function sairSemSalvar(descricao) {
+  abrirModal("Sair", descricao);
+  if (!document.getElementById("modalAcceptBtn")) return;
+  document.getElementById("modalAcceptBtn").onclick = () => {
+    return window.location.href = "../dashboards/dashboardnutricionista.html";
+  }
+}
+voltar.addEventListener("click", () => sairSemSalvar("Deseja voltar ao Dashboard?"));
+
 consultaForm.addEventListener("submit", cadastrarConsulta);
+

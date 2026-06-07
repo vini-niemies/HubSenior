@@ -18,7 +18,6 @@ async function carregarTreino() {
     if (!id_treino) {
         isEditing = false;
         editingId = null;
-        voltar.onclick = () => sairSemSalvar("Tem certeza que deseja sair?");
         return;
     }
 

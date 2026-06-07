@@ -96,8 +96,8 @@ async function criarPersonal(e) {
     const data = await response.json();
     if (data.erro) {
       console.log(data.erro);
-       mensagemErroCampo.textContent = data.erro;
-       return;
+      mensagemErroCampo.textContent = data.erro;
+      return;
     }
     if (data.sucesso) {
       mensagemErroCampo.textContent = ""

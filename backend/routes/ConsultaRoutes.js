@@ -5,6 +5,7 @@ import Functions from "../Functions/Functions.js";
 const router = express.Router();
 
 router.get("/consulta", Functions.verificaToken, (req, res) => ConsultaController.VerificarConsultaPorCliente(req, res));
+router.get("/consultas/:id", Functions.verificaToken, (req, res) => ConsultaController.BuscarConsulta(req, res));
 router.post("/consulta", Functions.verificaToken, (req, res) => ConsultaController.CriarConsulta(req, res));
 router.put("/consultas/:id",   Functions.verificaToken, ConsultaController.AtualizarConsulta);
 router.delete("/consultas/:id", Functions.verificaToken, ConsultaController.DeletarConsulta);

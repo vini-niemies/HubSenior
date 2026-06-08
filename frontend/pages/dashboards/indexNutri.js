@@ -104,7 +104,7 @@ async function carregarDietas(id, card) {
     const possuiConsulta = Boolean(dataConsulta?.sucesso?.possuiConsulta);
     const botaoRegistrarConsulta = !possuiConsulta
       ? `<a class="card-botoes" href="../consulta/index.html?id_cliente=${id}">Registrar Consulta</a>`
-      : "";
+      : `<a class="card-botoes" href="../consulta/index.html?id_consulta=${dataConsulta.sucesso.id_consulta}">Alterar Consulta</a>`;
 
     if (dataDietas.erro) {
       listaDietas.innerHTML = `<p class="cards-div-message">Falha ao encontrar dietas</p>`;

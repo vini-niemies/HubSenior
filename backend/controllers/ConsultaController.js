@@ -25,12 +25,13 @@ class ConsultaController {
       }
 
       const [consultaRows] = await conn.promise().execute(
-        "SELECT COUNT(*) AS total FROM consultas WHERE id_cliente = ? AND id_nutricionista = ?",
+        "SELECT id_consulta FROM consultas WHERE id_cliente = ? AND id_nutricionista = ? LIMIT 1",
         [id_cliente, id_nutricionista]
       );
 
-      const total = consultaRows?.[0]?.total || 0;
-      return res.status(200).json({ sucesso: { possuiConsulta: total > 0 } });
+      const possuiConsulta = consultaRows.length > 0;
+      const id_consulta = possuiConsulta ? consultaRows[0].id_consulta : null;
+      return res.status(200).json({ sucesso: { possuiConsulta, id_consulta } });
     } catch (error) {
       return res.status(500).json({ erro: error });
     }
@@ -172,6 +173,34 @@ class ConsultaController {
       }
 
       return res.status(200).json({ sucesso: "Consulta atualizada com sucesso" });
+    } catch (error) {
+      return res.status(500).json({ erro: error });
+    }
+  }
+
+  async BuscarConsulta(req, res) {
+    try {
+      if (req.user.role !== "nutricionista") {
+        return res.status(403).json({ erro: "Apenas nutricionistas podem consultar consultas" });
+      }
+
+      const id_consulta = req.params?.id;
+      if (!id_consulta) {
+        return res.status(400).json({ erro: "id da consulta é obrigatório" });
+      }
+
+      const id_nutricionista = req.user.id;
+
+      const [consultaRows] = await conn.promise().execute(
+        "SELECT * FROM consultas WHERE id_consulta = ? AND id_nutricionista = ?",
+        [id_consulta, id_nutricionista]
+      );
+
+      if (consultaRows.length <= 0) {
+        return res.status(404).json({ erro: "Consulta não encontrada para este nutricionista" });
+      }
+
+      return res.status(200).json({ sucesso: consultaRows[0] });
     } catch (error) {
       return res.status(500).json({ erro: error });
     }
